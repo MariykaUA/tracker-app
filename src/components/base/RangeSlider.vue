@@ -66,9 +66,11 @@ $thumb: 36px;
   gap: $space-1;
 }
 
+// Label over readout, in a column as wide as the wider of the two, as in the prototype
 .range-slider__head--stacked {
   display: flex;
   flex-direction: column;
+  align-self: flex-start;
 
   .range-slider__label {
     color: $color-ink-soft;
