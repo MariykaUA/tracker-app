@@ -19,6 +19,12 @@ const router = createRouter({
       component: HomeView,
       meta: { title: 'Your week', nav: true },
     },
+    {
+      path: '/one-thing',
+      name: 'one-thing',
+      component: () => import('../views/OneThingView.vue'),
+      meta: { title: 'One thing of today', nav: true },
+    },
   ],
 })
 
