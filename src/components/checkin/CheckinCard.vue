@@ -12,12 +12,16 @@ import PebbleSleeping from '@/components/mascot/PebbleSleeping.vue'
 import PebbleStar from '@/components/mascot/PebbleStar.vue'
 import PebbleTearful from '@/components/mascot/PebbleTearful.vue'
 import PebbleWalking from '@/components/mascot/PebbleWalking.vue'
+import PebbleWondering from '@/components/mascot/PebbleWondering.vue'
 import { ONE_THING_DISC, TRACKER_ORDER, TRACKERS } from '@/constants/trackers'
 import type { CheckinDraft } from '@/types/checkin'
 
 // The check-in's big card: Pebble on the question's coloured disc, then the
 // question itself. The daily check-in and the one-day editor both use it.
-const props = defineProps<{ step: number }>()
+const props = defineProps<{
+  step: number
+  wondering?: boolean // the editor on a day with no answer yet: Pebble wonders on white
+}>()
 
 const draft = defineModel<CheckinDraft>('draft', { required: true })
 
@@ -49,8 +53,13 @@ defineExpose({ focusTitle })
 
 <template>
   <div ref="card" class="checkin-card">
-    <div class="checkin-card__illustration" :style="{ backgroundColor: disc }">
-      <component :is="POSES[step]" :key="step" />
+    <div
+      class="checkin-card__illustration"
+      :class="{ 'checkin-card__illustration--wondering': wondering }"
+      :style="wondering ? undefined : { backgroundColor: disc }"
+    >
+      <PebbleWondering v-if="wondering" />
+      <component :is="POSES[step]" v-else :key="step" />
     </div>
 
     <SleepStep v-if="step === 0" v-model:hours="draft.hours" v-model:rested="draft.rested" />
@@ -89,5 +98,9 @@ defineExpose({ focusTitle })
   border-radius: $radius-card;
   overflow: hidden;
   transition: background-color $duration-fade ease;
+}
+
+.checkin-card__illustration--wondering {
+  background-color: $color-face;
 }
 </style>
