@@ -1,9 +1,11 @@
 import {
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
+  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -18,6 +20,8 @@ import type { DateKey, DayValues, Entry, EntriesByDate } from '@/types/entry'
 interface UserDoc {
   years?: number[]
 }
+
+const BATCH_LIMIT = 500 // Firestore's maximum writes per batch
 
 const userRef = (uid: string) => doc(db, 'users', uid)
 const entriesRef = (uid: string) => collection(db, 'users', uid, 'entries')
@@ -61,4 +65,18 @@ export async function loadYears(uid: string): Promise<number[]> {
   const snap = await getDoc(userRef(uid))
   const years = (snap.data() as UserDoc | undefined)?.years ?? []
   return years.sort((a, b) => a - b)
+}
+
+// Every entry, up to 500 per batch, then users/{uid} itself. Runs before the
+// Auth user is deleted: the security rules need the signed-in user to allow it.
+export async function deleteUserData(uid: string): Promise<void> {
+  for (;;) {
+    const snap = await getDocs(query(entriesRef(uid), limit(BATCH_LIMIT)))
+    if (snap.empty) break
+
+    const batch = writeBatch(db)
+    snap.docs.forEach((entry) => batch.delete(entry.ref))
+    await batch.commit()
+  }
+  await deleteDoc(userRef(uid))
 }

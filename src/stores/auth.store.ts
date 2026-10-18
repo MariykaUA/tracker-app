@@ -2,11 +2,13 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { User } from 'firebase/auth'
 import * as authService from '@/services/auth.service'
+import { emailToUsername } from '@/utils/auth'
 import type { NewAccount } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
   const uid = ref<string | null>(null)
   const name = ref('')
+  const username = ref('') // from the account's internal address, so it needs no load
   const isAnonymous = ref(false)
   let ready: Promise<void> | undefined
 
@@ -20,6 +22,7 @@ export const useAuthStore = defineStore('auth', () => {
 
     uid.value = user?.uid ?? null
     isAnonymous.value = user?.isAnonymous ?? false
+    username.value = user?.email ? emailToUsername(user.email) : ''
     if (changed) {
       name.value = ''
       fetchName()
@@ -66,11 +69,16 @@ export const useAuthStore = defineStore('auth', () => {
     name.value = account.name.trim()
   }
 
-  // No UI yet (not designed); App.vue sends a signed-out screen to /sign-in
+  // The entries store resets itself when uid goes back to null (its uid watch)
   async function signOut(): Promise<void> {
     await authService.signOut()
     setUser(null)
   }
 
-  return { uid, name, isSignedIn, init, signIn, createAccount, signOut }
+  async function deleteAccount(password: string): Promise<void> {
+    await authService.deleteAccount(password)
+    setUser(null)
+  }
+
+  return { uid, name, username, isSignedIn, init, signIn, createAccount, signOut, deleteAccount }
 })

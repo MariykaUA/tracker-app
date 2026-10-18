@@ -4,13 +4,16 @@ import { RouterLink, type RouteLocationRaw } from 'vue-router'
 // The prototype's tj-btn. With `to` it's a RouterLink (it navigates), otherwise a button.
 withDefaults(
   defineProps<{
-    variant?: 'primary' | 'light' | 'ghost' | 'tab'
+    variant?: 'primary' | 'light' | 'ghost' | 'tab' | 'danger'
     size?: 'md' | 'sm' // sm: the 44 × 44 square icon button
     to?: RouteLocationRaw
     disabled?: boolean
     type?: 'button' | 'submit' // a form's main button submits it
+    // Looks and reads as disabled but keeps focus, for a button that's working;
+    // the view ignores clicks meanwhile
+    busy?: boolean
   }>(),
-  { variant: 'primary', size: 'md', to: undefined, disabled: false, type: 'button' },
+  { variant: 'primary', size: 'md', to: undefined, disabled: false, type: 'button', busy: false },
 )
 </script>
 
@@ -29,6 +32,7 @@ withDefaults(
     class="base-button"
     :class="[`base-button--${variant}`, `base-button--${size}`]"
     :disabled="disabled"
+    :aria-disabled="busy || undefined"
   >
     <slot />
   </button>
@@ -62,7 +66,8 @@ withDefaults(
     transform: translateY(3px);
   }
 
-  &:disabled {
+  &:disabled,
+  &[aria-disabled='true'] {
     opacity: 0.45;
     cursor: not-allowed;
     transform: none;
@@ -93,6 +98,12 @@ withDefaults(
   &:active:not(:disabled) {
     box-shadow: $shadow-btn-light-active;
   }
+}
+
+.base-button--danger {
+  background: $color-danger;
+  color: $color-card;
+  box-shadow: $shadow-btn-danger;
 }
 
 .base-button--ghost {

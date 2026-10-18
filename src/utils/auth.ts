@@ -13,6 +13,11 @@ export function isValidPassword(password: string): boolean {
   return password.length >= PASSWORD_MIN_LENGTH
 }
 
+// The username back from the account's internal address
+export function emailToUsername(email: string): string {
+  return email.slice(0, email.lastIndexOf('@'))
+}
+
 // The Firebase Email/Password address behind a username, never shown
 export function usernameToEmail(username: string): string {
   return `${normalizeUsername(username)}@${USERNAME_DOMAIN}`

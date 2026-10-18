@@ -54,6 +54,18 @@ const router = createRouter({
       meta: { title: "You're done for today" },
     },
     {
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/AccountView.vue'),
+      meta: { title: 'Account' },
+    },
+    {
+      path: '/account/delete',
+      name: 'account-delete',
+      component: () => import('../views/DeleteAccountView.vue'),
+      meta: { title: 'Delete account' },
+    },
+    {
       path: '/sign-in',
       name: 'sign-in',
       component: () => import('../views/SignInView.vue'),

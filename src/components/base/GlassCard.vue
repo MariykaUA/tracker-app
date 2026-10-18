@@ -1,11 +1,15 @@
 <script setup lang="ts">
 // The prototype's large white glass card. A <section> by default, so with an
 // aria-label it's a named region (the calendars use it that way); a <form> on sign-in.
-withDefaults(defineProps<{ as?: 'section' | 'div' | 'form' }>(), { as: 'section' })
+// `low`: the smaller shadow of the Account panels.
+withDefaults(defineProps<{ as?: 'section' | 'div' | 'form'; low?: boolean }>(), {
+  as: 'section',
+  low: false,
+})
 </script>
 
 <template>
-  <component :is="as" class="glass-card">
+  <component :is="as" class="glass-card" :class="{ 'glass-card--low': low }">
     <slot />
   </component>
 </template>
@@ -21,5 +25,9 @@ withDefaults(defineProps<{ as?: 'section' | 'div' | 'form' }>(), { as: 'section'
   background: $color-card;
   box-shadow: $shadow-sheet;
   @include glass;
+}
+
+.glass-card--low {
+  box-shadow: $shadow-nav;
 }
 </style>

@@ -650,13 +650,19 @@ export const db = initializeFirestore(app, { localCache: persistentLocalCache() 
 
 ### `src/services/auth.service.ts`
 
-Login is a **username and password** (artboards 18 Sign in and 19 Create an account), on Firebase **Email/Password** auth. There's no silent anonymous sign-in any more.
+Login is a **username and password** (artboards 18 Sign in and 19 Create an account; 21 Account and 22 Delete account to sign out and delete), on Firebase **Email/Password** auth. There's no silent anonymous sign-in any more.
 
 - **Usernames:** trimmed, lowercased, 3–20 letters or numbers (`utils/auth.ts`). Firebase needs an email, so a username maps to `${username}@tracker-app.vercel.app` (`USERNAME_DOMAIN` in `constants/auth.ts`). That address is internal and never shown. Passwords need at least 6 characters.
-- **`getCurrentUser()`:** waits for Firebase to restore the saved session (`auth.authStateReady()`) and returns it, or `null`.
+- **`watchUser(callback)`:** `onAuthStateChanged`: calls back once the saved session is restored, then on every sign-in and sign-out (in any tab).
 - **`signIn(username, password)`:** `signInWithEmailAndPassword`.
 - **`createAccount({ name, username, password })`:** if the current user is **anonymous** (from before login), `linkWithCredential` upgrades it in place, so its uid and entries are kept. Otherwise `createUserWithEmailAndPassword`. Then it saves `{ name, username }` on `users/{uid}` with `merge: true`, next to the `years` list.
-- **`signOut()`:** service and store only for now; there's no sign-out UI until it's designed.
+- **`signOut()`:** from the Account screen, which then goes to `/sign-in`.
+- **`deleteAccount(password)`:** in this order, because the security rules need the signed-in user to delete the data:
+  1. `reauthenticateWithCredential` with the typed password (`EmailAuthProvider.credential`): Firebase only deletes a user after a recent login. A wrong password (`auth/invalid-credential`) or no connection stops it here, before anything is deleted.
+  2. `deleteUserData(uid)` in `entries.service`: every doc in `users/{uid}/entries` in batches of up to 500 (`writeBatch`), then `users/{uid}`.
+  3. `deleteUser`.
+
+  The store then sets the user to `null` (the entries store resets itself), and the view goes to `/sign-in` and announces "Your account was deleted." through the live region. Copy in `DELETE_ACCOUNT_MESSAGES` (`constants/auth.ts`): "Type your password to confirm.", "That password isn't right.", "Couldn't connect. Nothing was deleted."
 - **`loadName(uid)`:** the name shown on Home.
 - **Errors:** known Firebase errors become an `AuthError` with a code; the screens show the copy from `AUTH_ERROR_MESSAGES` as text under the field (`aria-invalid`, `aria-describedby`), or under the fields with `role="alert"` when it's not one field's fault (offline).
 
@@ -775,10 +781,11 @@ export async function loadYears(uid: string): Promise<number[]> {
 
 ### `auth.store.ts`
 
-- **State:** `uid`, `name` (loaded from `users/{uid}` in the background), `isSignedIn` (a user that isn't anonymous).
+- **State:** `uid`, `name` (loaded from `users/{uid}` in the background), `username` (from the account's internal address), `isSignedIn` (a user that isn't anonymous).
 - **Actions:**
-  - `init()`: restores the saved session once; `main.ts` and the router guard both await it.
-  - `signIn(username, password)`, `createAccount(account)`, `signOut()`: call the service and update the state. Whenever the account changes (sign out, another account), the entries cache is cleared with `useEntriesStore().clear()`.
+  - `init()`: starts following `watchUser` for the whole app life and resolves once the saved session is restored; `main.ts` and the router guard both await it.
+  - `signIn(username, password)`, `createAccount(account)`, `signOut()`, `deleteAccount(password)`: call the service and update the state.
+  - Whenever the signed-in uid changes, the entries store resets itself and loads the new account (one `watch` in `entries.store.ts`), so one person's entries are never shown to another.
 
 ### `entries.store.ts`
 
@@ -816,7 +823,9 @@ Every screen below is an artboard in the [Tracker App Prototype](https://claude.
 |---|---|---|---|
 | `/sign-in` | `SignInView` | 18 Sign in | Username and password; link to Create an account |
 | `/create-account` | `CreateAccountView` | 19 Create an account | Name, username, password; keeps an anonymous session's entries |
-| `/` | `HomeView` | Home, 20 Home signed in | Date, "Your week, <name>" (the name follows the title, not the artboard's separate "Hi" line): today's highlight card and one card per tracker with this week's M–S dots |
+| `/` | `HomeView` | Home, 20 Home signed in | Date, "Your week, <name>": today's highlight card and one card per tracker with this week's M–S dots. Pebble in the header links to Account ("Your account") |
+| `/account` | `AccountView` | 21 Account | Name and username, **Sign out**, and the Delete account section linking to `/account/delete` |
+| `/account/delete` | `DeleteAccountView` | 22 Delete account | What gets deleted, password to confirm, **Delete forever** and **Keep my account** |
 | `/one-thing` | `OneThingView` | Most important | "One thing of today" plus earlier days; empty days offer "Add" |
 | `/tracker/:id` | `TrackerView` | Sleep / Steps / Mood / Anxiety / Crying calendar, Mood month, Sleep week | One view for all five trackers with **Calendar** (year grid, "2026 so far"), **Month** and **Week** tabs |
 | `/checkin` | `CheckinView` | Check-in 1–6 | Six steps: Sleep → Steps → Mood → Anxiety → Crying → Most important, with Back / Next / Done |

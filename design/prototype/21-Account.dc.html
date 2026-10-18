@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&amp;family=Nunito:wght@600;700;800&amp;display=swap">
+<style>
+body { margin: 0; }
+* { box-sizing: border-box; }
+.tj-blur { -webkit-backdrop-filter: blur(20px) saturate(1.5); backdrop-filter: blur(20px) saturate(1.5); }
+.tj-blur-sm { -webkit-backdrop-filter: blur(12px) saturate(1.5); backdrop-filter: blur(12px) saturate(1.5); }
+.tj-scroll { scrollbar-width: none; }
+.tj-scroll::-webkit-scrollbar { display: none; }
+.tj-soft-edge { -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%); }
+.tj-press { cursor: pointer; transition: transform 180ms cubic-bezier(.3, 1.6, .5, 1), filter 180ms ease; -webkit-tap-highlight-color: transparent; }
+.tj-press:hover { filter: brightness(1.04); }
+.tj-press:active { transform: scale(.96); }
+.tj-press:disabled { opacity: .45; cursor: not-allowed; transform: none; filter: none; }
+.tj-btn { cursor: pointer; border: 0; display: flex; align-items: center; justify-content: center; font-family: inherit; font-weight: 800; transition: transform 120ms ease, box-shadow 120ms ease, filter 180ms ease; -webkit-tap-highlight-color: transparent; }
+.tj-btn:hover { filter: brightness(1.03); }
+.tj-btn:active { transform: translateY(3px); }
+.tj-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; filter: none; }
+.tj-btn-primary { background: #ffafcc; color: #3f2d5c; box-shadow: 0 4px 0 #ee7fa9, 0 10px 16px rgba(238, 127, 169, .30), inset 0 2px 0 rgba(255, 255, 255, .55); }
+.tj-btn-primary:active { box-shadow: 0 1px 0 #ee7fa9, 0 4px 8px rgba(238, 127, 169, .24), inset 0 2px 0 rgba(255, 255, 255, .55); }
+.tj-btn-light { background: #ffffff; color: #3f2d5c; box-shadow: 0 4px 0 #cdb4db, 0 10px 16px rgba(120, 90, 160, .14), inset 0 2px 0 #ffffff; }
+.tj-btn-light:active { box-shadow: 0 1px 0 #cdb4db, 0 4px 8px rgba(120, 90, 160, .12), inset 0 2px 0 #ffffff; }
+.tj-btn-sm { box-shadow: 0 3px 0 #cdb4db, inset 0 2px 0 #ffffff; }
+.tj-btn-sm:active { transform: translateY(2px); box-shadow: 0 1px 0 #cdb4db, inset 0 2px 0 #ffffff; }
+.tj-btn-ghost { background: transparent; color: #5a4779; }
+.tj-btn-tab { background: #f0e9f4; color: #3f2d5c; box-shadow: 0 3px 0 #cdb4db, inset 0 2px 0 rgba(255, 255, 255, .7); }
+.tj-btn-tab:active { transform: translateY(2px); box-shadow: 0 1px 0 #cdb4db, inset 0 2px 0 rgba(255, 255, 255, .7); }
+.tj-tile { cursor: pointer; transition: transform 120ms ease, box-shadow 120ms ease, filter 180ms ease; -webkit-tap-highlight-color: transparent; }
+.tj-tile:hover { filter: brightness(1.03); }
+.tj-tile:active { transform: translateY(3px); }
+.tj-btn:focus-visible, .tj-tile:focus-visible { outline: 3px solid #3f2d5c; outline-offset: 3px; }
+.tj-cell { cursor: pointer; transition: transform 140ms cubic-bezier(.3, 1.6, .5, 1); -webkit-tap-highlight-color: transparent; }
+.tj-cell:active { transform: scale(.78); }
+.tj-cell:disabled { cursor: default; transform: none; }
+.tj-press:focus-visible, .tj-cell:focus-visible, .tj-range:focus-visible, .tj-field:focus-visible { outline: 3px solid #3f2d5c; outline-offset: 3px; }
+.tj-link:focus-visible { outline: 3px solid #3f2d5c; outline-offset: 3px; border-radius: 12px; }
+.tj-field::placeholder { color: #5a4779; opacity: .85; }
+.tj-range { -webkit-appearance: none; appearance: none; position: absolute; left: 0; top: 0; width: 100%; height: 44px; margin: 0; background: transparent; cursor: pointer; border-radius: 999px; }
+.tj-range::-webkit-slider-runnable-track { height: 44px; background: transparent; }
+.tj-range::-moz-range-track { height: 44px; background: transparent; }
+.tj-range::-webkit-slider-thumb { -webkit-appearance: none; width: 36px; height: 36px; margin-top: 4px; border-radius: 999px; border: 1.5px solid #ffffff; background: linear-gradient(#ffffff, #fbf5fb); box-shadow: 0 6px 12px rgba(120, 90, 160, .32), inset 0 1.5px 0 rgba(255, 255, 255, .9); transition: transform 180ms ease; }
+.tj-range:active::-webkit-slider-thumb { transform: scale(1.08); }
+.tj-range::-moz-range-thumb { width: 36px; height: 36px; border-radius: 999px; border: 1.5px solid #ffffff; background: linear-gradient(#ffffff, #fbf5fb); box-shadow: 0 6px 12px rgba(120, 90, 160, .32); }
+.tj-rise { animation: tj-rise 450ms ease both; }
+@keyframes tj-rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.tj-slide { animation: tj-slide 380ms cubic-bezier(.2, .9, .3, 1.05) both; }
+@keyframes tj-slide {
+  from { opacity: 0; transform: translateX(36px); }
+  to { opacity: 1; transform: none; }
+}
+.tj-fade { animation: tj-fade 300ms ease both; }
+@keyframes tj-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.tj-bob { animation: tj-bob 3.2s ease-in-out infinite; }
+@keyframes tj-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.tj-sway { animation: tj-sway 1.1s ease-in-out infinite; transform-origin: 50% 92%; }
+@keyframes tj-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+.tj-breathe { animation: tj-breathe 3.6s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes tj-breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03, .97); }
+}
+.tj-drip { animation: tj-drip 2.4s ease-in infinite; }
+@keyframes tj-drip {
+  0% { transform: translateY(-6px); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(16px); opacity: 0; }
+}
+.tj-pop { animation: tj-pop 700ms cubic-bezier(.3, 1.6, .5, 1) 250ms both, tj-bob 1.6s ease-in-out 950ms infinite; }
+@keyframes tj-pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+.tj-confetti { animation: tj-fall 2.6s cubic-bezier(.3, .6, .5, 1) both; }
+@keyframes tj-fall {
+  0% { transform: translateY(-60px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(780px) rotate(540deg); opacity: 0; }
+}
+.tj-ring { transition: stroke-dashoffset 600ms cubic-bezier(.3, 1.3, .5, 1); }
+.tj-bar { animation: tj-grow 600ms cubic-bezier(.3, 1.3, .5, 1) both; transform-origin: 50% 100%; }
+@keyframes tj-grow {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tj-rise, .tj-slide, .tj-fade, .tj-bob, .tj-sway, .tj-breathe, .tj-drip, .tj-pop, .tj-bar { animation: none; }
+  .tj-confetti { display: none; }
+  .tj-press, .tj-cell, .tj-ring, .tj-btn, .tj-tile { transition: none; }
+}
+</style>
+</helmet>
+<div style="position: relative; width: 390px; height: 844px; overflow: hidden; background: #f0e9f4; color: #3f2d5c; font-family: Nunito, 'Segoe UI', system-ui, sans-serif; font-size: 16px; line-height: 24px; font-weight: 600">
+  <main style="position: absolute; left: 0; top: 0; width: 390px; height: 844px; padding: 56px 16px 34px; display: flex; flex-direction: column; gap: 16px">
+    <a class="tj-btn tj-btn-light tj-btn-sm" href="20-Home-signed-in.dc.html" style="align-self: flex-start; height: 44px; padding: 0 16px 0 10px; gap: 4px; border-radius: 14px; font-size: 16px; line-height: 20px; text-decoration: none"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="flex: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round"><path d="M15 6l-6 6l6 6"></path></svg><span>Back</span></a>
+    <div class="tj-rise" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px">
+      <h1 style="margin: 0; font-family: Fredoka, Nunito, sans-serif; font-size: 30px; line-height: 34px; font-weight: 600">Your account</h1>
+      <div class="tj-bob" aria-hidden="true" style="flex: none; align-self: center; width: 92px; height: 81px">
+        <svg width="92" height="81" viewBox="4 6 120 106"><circle cx="16" cy="30" r="3" fill="#ffffff"></circle><circle cx="116" cy="96" r="2.5" fill="#ffffff"></circle><path d="M14 52l2.4 5l5 .6l-3.8 3.4l1 5l-4.6-2.6l-4.6 2.6l1-5l-3.8-3.4l5-.6z" fill="#fcefc2" stroke="#3f2d5c" style="stroke-width: 1.6; stroke-linejoin: round"></path><ellipse cx="22" cy="64" rx="12" ry="23" transform="rotate(16 22 64)" fill="#cdb4db"></ellipse><g class="tj-sway" style="transform-box: fill-box"><ellipse cx="104" cy="38" rx="12" ry="23" transform="rotate(32 104 38)" fill="#cdb4db"></ellipse></g><ellipse cx="60" cy="66" rx="41" ry="35" fill="#ffcfb0"></ellipse><ellipse cx="44" cy="47" rx="15" ry="7" transform="rotate(-18 44 47)" fill="#ffffff" style="opacity: 0.5"></ellipse><ellipse cx="62" cy="32" rx="18" ry="9" transform="rotate(-6 62 32)" fill="#ee7fa9"></ellipse><ellipse cx="56" cy="29" rx="7" ry="2.5" transform="rotate(-6 56 29)" fill="#ffffff" style="opacity: 0.45"></ellipse><ellipse cx="35" cy="77" rx="7" ry="4.5" fill="#ffafcc"></ellipse><ellipse cx="85" cy="77" rx="7" ry="4.5" fill="#ffafcc"></ellipse><circle cx="45" cy="67" r="3.2" fill="#3f2d5c"></circle><circle cx="75" cy="67" r="3.2" fill="#3f2d5c"></circle><ellipse cx="60" cy="72" rx="3" ry="2.2" fill="#3f2d5c"></ellipse><path d="M53 77q3.5 4 7 0q3.5 4 7 0" fill="none" stroke="#3f2d5c" style="stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round"></path></svg>
+      </div>
+    </div>
+
+    <section class="tj-blur tj-rise" aria-label="Account details" style="position: relative; padding: 20px; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #e6d8ec; border-radius: 32px; background: #ffffff; box-shadow: 0 10px 20px rgba(120,90,160,0.18), inset 0 1.5px 0 rgba(255,255,255,0.90), inset 0 0 0 1px rgba(255,255,255,0.30)">
+      <dl style="margin: 0; display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <dt style="font-size: 12px; line-height: 16px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #5a4779">Name</dt>
+          <dd style="margin: 0; font-family: Fredoka, Nunito, sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">Mariia</dd>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <dt style="font-size: 12px; line-height: 16px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #5a4779">Username</dt>
+          <dd style="margin: 0; font-family: Fredoka, Nunito, sans-serif; font-size: 22px; line-height: 28px; font-weight: 600">mariia</dd>
+        </div>
+      </dl>
+      <a class="tj-btn tj-btn-light" href="18-Sign-in.dc.html" style="height: 56px; padding: 0 24px; gap: 10px; border-radius: 18px; font-size: 17px; line-height: 22px; text-decoration: none">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="flex: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"></path><path d="M10 16l-4-4l4-4M6 12h10"></path></svg>
+        <span>Sign out</span>
+      </a>
+    </section>
+
+    <section class="tj-blur tj-rise" aria-labelledby="tj-danger" style="position: relative; padding: 20px; display: flex; flex-direction: column; gap: 16px; border: 1.5px solid #e6d8ec; border-radius: 32px; background: #ffffff; box-shadow: 0 10px 20px rgba(120,90,160,0.18), inset 0 1.5px 0 rgba(255,255,255,0.90), inset 0 0 0 1px rgba(255,255,255,0.30); margin-top: auto">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h2 id="tj-danger" style="margin: 0; font-family: Fredoka, Nunito, sans-serif; font-size: 20px; line-height: 24px; font-weight: 600">Delete account</h2>
+        <p style="margin: 0; font-size: 14px; line-height: 20px; font-weight: 700; color: #5a4779">Removes your account and every day you've logged. This can't be undone.</p>
+      </div>
+      <a class="tj-btn tj-btn-light" href="22-Delete-account.dc.html" style="height: 56px; padding: 0 24px; gap: 10px; border-radius: 18px; font-size: 17px; line-height: 22px; text-decoration: none; color: #8b2635">
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" style="flex: none; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"></path></svg>
+        <span>Delete account</span>
+      </a>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {};
+  }
+}
+</script>
+</body>
+</html>
