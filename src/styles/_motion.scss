@@ -1,0 +1,166 @@
+// The prototype's animations as global classes (its tj-rise, tj-slide, tj-bob, …),
+// shared by the check-in, Done and mascot components. Global rather than scoped,
+// so every component uses the same keyframes.
+@use 'tokens' as *;
+
+.motion-rise {
+  animation: motion-rise 450ms ease both;
+}
+
+.motion-slide {
+  animation: motion-slide 380ms $ease-slide both;
+}
+
+.motion-fade {
+  animation: motion-fade $duration-fade ease both;
+}
+
+.motion-bob {
+  animation: motion-bob 3.2s ease-in-out infinite;
+}
+
+.motion-sway {
+  animation: motion-sway 1.1s ease-in-out infinite;
+  transform-origin: 50% 92%;
+}
+
+.motion-breathe {
+  animation: motion-breathe 3.6s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.motion-drip {
+  animation: motion-drip 2.4s ease-in infinite;
+}
+
+.motion-pop {
+  animation:
+    motion-pop 700ms $ease-spring 250ms both,
+    motion-bob 1.6s ease-in-out 950ms infinite;
+}
+
+.motion-confetti {
+  animation: motion-fall 2.6s cubic-bezier(0.3, 0.6, 0.5, 1) both;
+}
+
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes motion-slide {
+  from {
+    opacity: 0;
+    transform: translateX(36px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes motion-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes motion-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes motion-sway {
+  0%,
+  100% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes motion-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03, 0.97);
+  }
+}
+
+@keyframes motion-drip {
+  0% {
+    transform: translateY(-6px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(16px);
+    opacity: 0;
+  }
+}
+
+@keyframes motion-pop {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes motion-fall {
+  0% {
+    transform: translateY(-60px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(780px) rotate(540deg);
+    opacity: 0;
+  }
+}
+
+// As in the prototype: everything stands still and the confetti is left out
+@media (prefers-reduced-motion: reduce) {
+  .motion-rise,
+  .motion-slide,
+  .motion-fade,
+  .motion-bob,
+  .motion-sway,
+  .motion-breathe,
+  .motion-drip,
+  .motion-pop {
+    animation: none;
+  }
+
+  .motion-confetti {
+    display: none;
+  }
+}

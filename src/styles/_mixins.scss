@@ -50,6 +50,55 @@
   }
 }
 
+// Fills for the parts of the mascot SVGs in components/mascot/, so the drawings
+// use tokens instead of hex values. Include once in each mascot component.
+@mixin pebble-paint {
+  .body {
+    fill: $pebble-body;
+  }
+
+  .ears {
+    fill: $pebble-ears;
+  }
+
+  .cap {
+    fill: $pebble-cap;
+  }
+
+  .cheek {
+    fill: $pebble-cheeks;
+  }
+
+  .shine {
+    fill: $pebble-shine;
+    opacity: 0.5;
+  }
+
+  .cap-shine {
+    fill: $pebble-shine;
+    opacity: 0.45;
+  }
+
+  .ink {
+    fill: $pebble-ink;
+  }
+
+  // Closed eyes, smiles, brows: stroke-width stays on each path, as in the prototype
+  .line {
+    fill: none;
+    stroke: $pebble-ink;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  // Open mouth with the tongue showing
+  .tongue {
+    fill: $pebble-cap;
+    stroke: $pebble-ink;
+    stroke-linejoin: round;
+  }
+}
+
 // Frosted glass behind cards and panels
 @mixin glass($size: 'md') {
   $blur: $blur-glass;
