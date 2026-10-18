@@ -67,6 +67,12 @@ export const longDate = (dateKey: DateKey): string => {
   return `${WEEKDAYS[weekday]} ${day} ${monthName(month)}`
 }
 
+// "2026-10-04" → "Sun 4 October", the one-day editor's date
+export const mediumDate = (dateKey: DateKey): string => {
+  const [weekday = '', ...rest] = longDate(dateKey).split(' ')
+  return [weekday.slice(0, 3), ...rest].join(' ')
+}
+
 // "2026-10-08" → the seven date keys of its week, Monday first
 export const weekOf = (dateKey: DateKey): DateKey[] => {
   const year = yearOf(dateKey)

@@ -6,6 +6,7 @@ import {
   dayOf,
   daysInMonth,
   longDate,
+  mediumDate,
   monthName,
   monthOf,
   shortDate,
@@ -147,5 +148,11 @@ describe('daysBefore', () => {
 
   it('reaches back into last year', () => {
     expect(daysBefore('2027-01-02', 2)).toEqual(['2027-01-01', '2026-12-31'])
+  })
+})
+
+describe('mediumDate', () => {
+  it('shortens the weekday, as the one-day editor shows it', () => {
+    expect(mediumDate('2026-10-04')).toBe('Sun 4 October')
   })
 })
