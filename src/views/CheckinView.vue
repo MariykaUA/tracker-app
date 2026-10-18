@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, useTemplateRef, type Component } from 'vue'
+import { computed, onMounted, ref, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BaseButton from '@/components/base/BaseButton.vue'
-import AnxietyStep from '@/components/checkin/AnxietyStep.vue'
-import CryingStep from '@/components/checkin/CryingStep.vue'
-import MoodStep from '@/components/checkin/MoodStep.vue'
-import OneThingStep from '@/components/checkin/OneThingStep.vue'
-import SleepStep from '@/components/checkin/SleepStep.vue'
-import StepsStep from '@/components/checkin/StepsStep.vue'
+import CheckinCard from '@/components/checkin/CheckinCard.vue'
 import ProgressStepper from '@/components/layout/ProgressStepper.vue'
-import PebbleCalm from '@/components/mascot/PebbleCalm.vue'
-import PebbleCheerful from '@/components/mascot/PebbleCheerful.vue'
-import PebbleSleeping from '@/components/mascot/PebbleSleeping.vue'
-import PebbleStar from '@/components/mascot/PebbleStar.vue'
-import PebbleTearful from '@/components/mascot/PebbleTearful.vue'
-import PebbleWalking from '@/components/mascot/PebbleWalking.vue'
-import { ONE_THING_DISC, TRACKER_ORDER, TRACKERS } from '@/constants/trackers'
 import { useEntriesStore } from '@/stores/entries.store'
 import { useStatusStore } from '@/stores/status.store'
 import {
@@ -30,21 +18,11 @@ import { longDate, yearOf } from '@/utils/date'
 import type { CheckinDraft } from '@/types/checkin'
 import type { DayValues } from '@/types/entry'
 
-// Pebble's pose for each question, in check-in order
-const POSES: Component[] = [
-  PebbleSleeping,
-  PebbleWalking,
-  PebbleCheerful,
-  PebbleCalm,
-  PebbleTearful,
-  PebbleStar,
-]
-
 const entries = useEntriesStore()
 const status = useStatusStore()
 const router = useRouter()
 const route = useRoute()
-const card = useTemplateRef<HTMLElement>('card')
+const card = useTemplateRef('card')
 
 // Fixed when the check-in opens, so a check-in that runs past midnight
 // still saves to the day it started on
@@ -54,10 +32,6 @@ const isReady = ref(false)
 const step = ref(0)
 const draft = ref<CheckinDraft>(draftFrom(undefined))
 
-const disc = computed(() => {
-  const tracker = TRACKER_ORDER[step.value]
-  return tracker ? TRACKERS[tracker].disc : ONE_THING_DISC
-})
 const canGoOn = computed(() => canContinue(step.value, draft.value))
 
 // Today's entry may not be loaded yet when the check-in is opened directly
@@ -83,8 +57,7 @@ function requestedStep(): number | undefined {
 // Each question is its own screen to screen readers: focus moves to its title
 async function showStep(index: number): Promise<void> {
   step.value = index
-  await nextTick()
-  card.value?.querySelector<HTMLElement>('h1')?.focus()
+  await card.value?.focusTitle()
 }
 
 // The cache updates at once, so the UI doesn't wait for the server
@@ -118,22 +91,7 @@ function back(): void {
       </div>
       <p class="checkin__caption">{{ longDate(dateKey) }}</p>
 
-      <div ref="card" class="checkin__card">
-        <div class="checkin__illustration" :style="{ backgroundColor: disc }">
-          <component :is="POSES[step]" :key="step" />
-        </div>
-
-        <SleepStep
-          v-if="step === 0"
-          v-model:hours="draft.hours"
-          v-model:rested="draft.rested"
-        />
-        <StepsStep v-else-if="step === 1" v-model="draft.steps" />
-        <MoodStep v-else-if="step === 2" v-model="draft.mood" />
-        <AnxietyStep v-else-if="step === 3" v-model="draft.anx" />
-        <CryingStep v-else-if="step === 4" v-model="draft.cry" />
-        <OneThingStep v-else v-model="draft.imp" />
-      </div>
+      <CheckinCard ref="card" v-model:draft="draft" :step="step" />
 
       <div class="checkin__actions">
         <BaseButton variant="light" class="checkin__back" @click="back">
@@ -154,8 +112,7 @@ function back(): void {
 </template>
 
 <style scoped lang="scss">
-// Fills the screen like the prototype; on short screens or with large text
-// the card grows instead and the page scrolls, so nothing is cut off
+// Fills the screen like the prototype; the card takes the space in between
 .checkin {
   display: flex;
   flex-direction: column;
@@ -174,32 +131,6 @@ function back(): void {
   color: $color-ink-soft;
   text-align: center;
   @include type('eyebrow');
-}
-
-.checkin__card {
-  display: flex;
-  flex: 1 0 auto;
-  flex-direction: column;
-  gap: $space-4;
-  padding: $space-5;
-  border: $border-card;
-  border-radius: $radius-card;
-  background: $color-card;
-  box-shadow: $shadow-sheet;
-  @include glass;
-}
-
-.checkin__illustration {
-  display: flex;
-  flex: none;
-  align-self: center;
-  align-items: flex-end;
-  justify-content: center;
-  width: 176px;
-  height: 112px;
-  border-radius: $radius-card;
-  overflow: hidden;
-  transition: background-color $duration-fade ease;
 }
 
 .checkin__actions {
