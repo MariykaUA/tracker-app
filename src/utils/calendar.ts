@@ -36,7 +36,7 @@ export function dayCell(
     isToday: date === todayKey,
     color: logged ? def.colors[level - 1] : undefined,
     ink: logged ? def.ink[level - 1] : undefined,
-    label: `${name(date)}: ${logged ? def.say(entry) : isFuture ? 'still to come' : 'nothing logged'}`,
+    label: `${name(date)}: ${logged ? def.say(entry) : isFuture ? 'still to come' : 'nothing logged, tap to add'}`,
   }
 }
 

@@ -34,7 +34,7 @@ describe('dayCell', () => {
   it('names an empty past day and a day still to come', () => {
     expect(dayCell('mood', '2026-10-04', undefined, TODAY, longDate)).toMatchObject({
       state: 'empty',
-      label: 'Sunday 4 October: nothing logged',
+      label: 'Sunday 4 October: nothing logged, tap to add',
     })
     expect(dayCell('mood', '2026-10-09', undefined, TODAY, longDate)).toMatchObject({
       state: 'future',
