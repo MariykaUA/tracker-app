@@ -2,7 +2,6 @@ import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
 import type { User } from 'firebase/auth'
 import * as authService from '@/services/auth.service'
-import { useEntriesStore } from './entries.store'
 import type { NewAccount } from '@/types/auth'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -14,9 +13,8 @@ export const useAuthStore = defineStore('auth', () => {
   // An anonymous session from before login doesn't count: it has to create an account
   const isSignedIn = computed(() => uid.value !== null && !isAnonymous.value)
 
-  // Another account's entries never stay in the cache
+  // The entries store resets itself when the account changes (its uid watch)
   function setUser(user: User | null): void {
-    if (uid.value && user?.uid !== uid.value) useEntriesStore().clear()
     uid.value = user?.uid ?? null
     isAnonymous.value = user?.isAnonymous ?? false
   }
