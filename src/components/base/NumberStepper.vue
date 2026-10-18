@@ -121,9 +121,12 @@ function change(delta: number): void {
   }
 }
 
-// 148px wide like the prototype, narrower when the screen is (320px reflow)
+// 148px wide like the prototype, narrower when the screen is (320px reflow).
+// A real width, not just a flex-basis: Safari sizes the row from the input's
+// native width otherwise, so the row grows and the buttons and field sit left.
 .number-stepper__field {
-  flex: 0 1 148px;
+  flex: 0 1 auto;
+  width: 148px;
   min-width: 0;
   height: $tap-min;
   padding: 0 $space-4;
