@@ -1,6 +1,16 @@
-<!-- Pebble waving one ear beside a star: Sign in and Create an account -->
+<!-- Pebble waving one ear beside a star: Sign in, Create an account, and smaller on Account -->
+<script setup lang="ts">
+withDefaults(defineProps<{ small?: boolean }>(), { small: false })
+</script>
+
 <template>
-  <svg class="motion-bob" aria-hidden="true" width="132" height="116" viewBox="4 6 120 106">
+  <svg
+    class="motion-bob"
+    aria-hidden="true"
+    :width="small ? 92 : 132"
+    :height="small ? 81 : 116"
+    viewBox="4 6 120 106"
+  >
     <circle class="sparkle" cx="16" cy="30" r="3" />
     <circle class="sparkle" cx="116" cy="96" r="2.5" />
     <path
