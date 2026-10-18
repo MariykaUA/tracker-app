@@ -2,20 +2,22 @@
 import { useTemplateRef, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import BottomNav from '@/components/layout/BottomNav.vue'
+import PageAction from '@/components/layout/PageAction.vue'
 import { useStatusStore } from '@/stores/status.store'
 
 const route = useRoute()
 const status = useStatusStore()
 const main = useTemplateRef<HTMLElement>('main')
+const screen = useTemplateRef<HTMLElement>('screen')
 
 // On every page change (not the first load), start the new screen at the top and
 // move focus to its <h1>, so screen reader users hear which page opened
 watch(
   () => route.path,
   () => {
-    if (!main.value) return
-    main.value.scrollTop = 0
-    main.value.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true })
+    if (!screen.value) return
+    screen.value.scrollTop = 0
+    screen.value.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true })
   },
   { flush: 'post' },
 )
@@ -30,14 +32,12 @@ function skipToContent(): void {
   <a class="skip-link" href="#main" @click.prevent="skipToContent">Skip to content</a>
 
   <div class="app">
-    <main
-      id="main"
-      ref="main"
-      tabindex="-1"
-      class="app__main"
-      :class="{ 'app__main--tabs': route.meta.nav }"
-    >
-      <RouterView />
+    <!-- The screen scrolls; its main action (tab screens) stays below it, inside <main> -->
+    <main id="main" ref="main" tabindex="-1" class="app__main">
+      <div ref="screen" class="app__screen" :class="{ 'app__screen--tabs': route.meta.nav }">
+        <RouterView />
+      </div>
+      <PageAction v-if="route.meta.nav" />
     </main>
 
     <BottomNav v-if="route.meta.nav" />
@@ -75,13 +75,20 @@ function skipToContent(): void {
 }
 
 .app__main {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.app__screen {
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
 }
 
-// Tab screens: padding and the soft fade above the nav, as in the prototype
-.app__main--tabs {
+// Tab screens: padding and the soft fade above the page action, as in the prototype
+.app__screen--tabs {
   padding: $space-page-top $space-4 $space-8;
   scrollbar-width: none;
   -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 28px), transparent 100%);

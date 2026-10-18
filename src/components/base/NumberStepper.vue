@@ -81,11 +81,13 @@ function change(delta: number): void {
 </template>
 
 <style scoped lang="scss">
+// Never wider than its container, so the field can shrink on narrow screens
 .number-stepper {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $space-2;
+  max-width: 100%;
 }
 
 .number-stepper__label {
