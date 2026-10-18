@@ -1,0 +1,223 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Character.dc.html": {
+      "h": 844,
+      "title": "Character sheet",
+      "w": 880,
+      "x": 470,
+      "y": 0
+    },
+    "Main.dc.html": {
+      "h": 844,
+      "is_interactive": true,
+      "radius": 44,
+      "title": "Mobile prototype",
+      "w": 390,
+      "x": 0,
+      "y": -3
+    },
+    "screens/01-Home.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Home",
+      "w": 390,
+      "x": 0,
+      "y": 1260
+    },
+    "screens/02-Most-important.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Most important",
+      "w": 390,
+      "x": 470,
+      "y": 1260
+    },
+    "screens/03-Sleep.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Sleep calendar",
+      "w": 390,
+      "x": 0,
+      "y": 2484
+    },
+    "screens/04-Steps.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Steps calendar",
+      "w": 390,
+      "x": 470,
+      "y": 2484
+    },
+    "screens/05-Mood.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Mood calendar",
+      "w": 390,
+      "x": 940,
+      "y": 2484
+    },
+    "screens/06-Anxiety.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Anxiety calendar",
+      "w": 390,
+      "x": 1410,
+      "y": 2484
+    },
+    "screens/07-Crying.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Crying calendar",
+      "w": 390,
+      "x": 1880,
+      "y": 2484
+    },
+    "screens/08-Mood-month.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Mood month",
+      "w": 390,
+      "x": 2350,
+      "y": 2484
+    },
+    "screens/09-Sleep-week.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Sleep week",
+      "w": 390,
+      "x": 2820,
+      "y": 2484
+    },
+    "screens/10-Checkin-sleep.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Check-in 1 Sleep",
+      "w": 390,
+      "x": 0,
+      "y": 3708
+    },
+    "screens/11-Checkin-steps.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Check-in 2 Steps",
+      "w": 390,
+      "x": 470,
+      "y": 3708
+    },
+    "screens/12-Checkin-mood.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Check-in 3 Mood",
+      "w": 390,
+      "x": 940,
+      "y": 3708
+    },
+    "screens/13-Checkin-anxiety.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Check-in 4 Anxiety",
+      "w": 390,
+      "x": 1410,
+      "y": 3708
+    },
+    "screens/14-Checkin-crying.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Check-in 5 Crying",
+      "w": 390,
+      "x": 1880,
+      "y": 3708
+    },
+    "screens/15-Checkin-important.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Check-in 6 Most important",
+      "w": 390,
+      "x": 2350,
+      "y": 3708
+    },
+    "screens/16-Edit-missed-day.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Edit a missed day",
+      "w": 390,
+      "x": 2820,
+      "y": 3708
+    },
+    "screens/17-Done.dc.html": {
+      "h": 844,
+      "radius": 44,
+      "title": "Done",
+      "w": 390,
+      "x": 3290,
+      "y": 3708
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-10-08T17:53:00Z",
+    "v": 1
+  },
+  "designSystems": [
+    {
+      "artifact": "https://claude.ai/artifact/CStLQFhpp2FqAw5AXyPwwf",
+      "copiedAt": "2026-10-08T17:53:00Z",
+      "namespace": "trackingjournal",
+      "title": "Tracking Journal",
+      "version": "1791479936-d82b"
+    }
+  ],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "row1": {
+      "kind": "title1",
+      "maxW": 900,
+      "text": "Home & Most important",
+      "w": 240,
+      "x": 0,
+      "y": 1000
+    },
+    "row2": {
+      "kind": "title1",
+      "maxW": 3210,
+      "text": "Tracker pages",
+      "w": 240,
+      "x": 0,
+      "y": 2224
+    },
+    "row3": {
+      "kind": "title1",
+      "maxW": 3680,
+      "text": "Check-in & editing",
+      "w": 240,
+      "x": 0,
+      "y": 3448
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Character.dc.html",
+    "screens/01-Home.dc.html",
+    "screens/02-Most-important.dc.html",
+    "screens/03-Sleep.dc.html",
+    "screens/04-Steps.dc.html",
+    "screens/05-Mood.dc.html",
+    "screens/06-Anxiety.dc.html",
+    "screens/07-Crying.dc.html",
+    "screens/08-Mood-month.dc.html",
+    "screens/09-Sleep-week.dc.html",
+    "screens/10-Checkin-sleep.dc.html",
+    "screens/11-Checkin-steps.dc.html",
+    "screens/12-Checkin-mood.dc.html",
+    "screens/13-Checkin-anxiety.dc.html",
+    "screens/14-Checkin-crying.dc.html",
+    "screens/15-Checkin-important.dc.html",
+    "screens/16-Edit-missed-day.dc.html",
+    "screens/17-Done.dc.html"
+  ],
+  "pages": [],
+  "title": "Tracker App Prototype"
+}
