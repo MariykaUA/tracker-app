@@ -8,13 +8,18 @@ import { monthOf, shortDate, yearOf } from '@/utils/date'
 import type { DateKey, EntriesByDate, TrackerId } from '@/types/entry'
 
 // The year in pixels: a column per month, a row per day of the month.
-// Each day is labelled like the prototype ("1 October: 7.5 hours, felt rested").
+// Each day is labelled like the prototype ("1 October: 7.5 hours, felt rested")
+// and opens it in the one-day editor; days still to come are disabled.
+// The cells are smaller than 24px, which WCAG 2.5.8 allows because the month
+// view offers the same days as 44px targets.
 const props = defineProps<{
   trackerId: TrackerId
   year: number
   entries: EntriesByDate
   todayKey: DateKey
 }>()
+
+defineEmits<{ pick: [date: DateKey] }>()
 
 const MONTH_LETTERS = 'JFMAMJJASOND'.split('')
 const DAY_NUMBERS = Array.from({ length: 31 }, (_, i) => i + 1)
@@ -60,15 +65,18 @@ const cells = computed<(DayCell | null)[]>(() =>
         </div>
         <div class="year-grid__cells">
           <template v-for="(cell, index) in cells" :key="index">
-            <span
+            <button
               v-if="cell"
-              role="img"
+              type="button"
               class="year-grid__cell"
               :class="[`year-grid__cell--${cell.state}`, { 'is-today': cell.isToday }]"
               :style="cell.color ? { backgroundColor: cell.color } : undefined"
+              :disabled="cell.state === 'future'"
               :aria-label="cell.label"
+              :aria-current="cell.isToday ? 'date' : undefined"
               :title="cell.label"
-            ></span>
+              @click="$emit('pick', cell.date)"
+            ></button>
             <span v-else class="year-grid__cell year-grid__cell--none" aria-hidden="true"></span>
           </template>
         </div>
@@ -156,6 +164,7 @@ $row: 20px;
   height: $row;
   border: 2px solid $color-edge;
   border-radius: $radius-cell;
+  @include cell-press;
 }
 
 .year-grid__cell--logged {

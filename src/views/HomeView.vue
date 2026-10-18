@@ -1,14 +1,19 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import HighlightCard from '@/components/home/HighlightCard.vue'
 import TrackerWeekCard from '@/components/home/TrackerWeekCard.vue'
 import PebbleSmiling from '@/components/mascot/PebbleSmiling.vue'
 import { TRACKER_ORDER } from '@/constants/trackers'
+import { editDay } from '@/router/links'
 import { useEntriesStore } from '@/stores/entries.store'
+import { LAST_STEP } from '@/utils/checkin'
 import { longDate } from '@/utils/date'
 
 const entries = useEntriesStore()
 const isLoading = ref(true)
+
+// The highlight opens today's one thing in the one-day editor, as in the prototype
+const editHighlight = computed(() => editDay(entries.todayKey, LAST_STEP))
 
 // This week can start in last year, so the store loads every year it touches
 onMounted(async () => {
@@ -32,7 +37,7 @@ onMounted(async () => {
       <PebbleSmiling />
     </header>
 
-    <HighlightCard :text="entries.todayEntry?.imp" />
+    <HighlightCard :text="entries.todayEntry?.imp" :to="editHighlight" />
 
     <div
       role="group"

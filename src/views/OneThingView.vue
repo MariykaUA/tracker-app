@@ -1,20 +1,28 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import EarlierDays from '@/components/one-thing/EarlierDays.vue'
 import TodayCard from '@/components/one-thing/TodayCard.vue'
 import oneThingIcon from '@/assets/icons/icon-one-thing.png'
+import { editDay } from '@/router/links'
 import { useEntriesStore } from '@/stores/entries.store'
 import { LAST_STEP } from '@/utils/checkin'
 import { daysBefore, longDate, yearOf } from '@/utils/date'
-import type { WeekDay } from '@/types/entry'
+import type { DateKey, WeekDay } from '@/types/entry'
 
 const EARLIER_DAYS = 7
 
 const entries = useEntriesStore()
+const router = useRouter()
 const isLoading = ref(true)
 
-// Writing today's one thing opens the check-in on its question
-const writeToday = { name: 'checkin', query: { step: LAST_STEP } }
+// Today's card and every earlier day open that day's one thing in the
+// one-day editor, as in the prototype
+const writeToday = computed(() => editDay(entries.todayKey, LAST_STEP))
+
+function openDay(date: DateKey): void {
+  void router.push(editDay(date, LAST_STEP))
+}
 
 const earlier = computed<WeekDay[]>(() =>
   daysBefore(entries.todayKey, EARLIER_DAYS).map((date) => ({
@@ -48,7 +56,7 @@ onMounted(async () => {
 
     <TodayCard :text="entries.todayEntry?.imp" :to="writeToday" />
 
-    <EarlierDays :days="earlier" :yesterday-key="earlier[0]?.date ?? ''" />
+    <EarlierDays :days="earlier" :yesterday-key="earlier[0]?.date ?? ''" @pick="openDay" />
   </div>
 </template>
 

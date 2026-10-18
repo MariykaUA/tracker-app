@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue'
 import MoodNotes from '@/components/calendar/MoodNotes.vue'
 import RangeTabs from '@/components/calendar/RangeTabs.vue'
@@ -8,27 +9,47 @@ import WeekBars from '@/components/calendar/WeekBars.vue'
 import YearGrid from '@/components/calendar/YearGrid.vue'
 import { TRACKER_ICONS } from '@/constants/icons'
 import { TRACKERS } from '@/constants/trackers'
+import { editDay } from '@/router/links'
 import { useEntriesStore } from '@/stores/entries.store'
 import { dateKeyOf, dateRange, daysInMonth, monthName, monthOf, yearOf } from '@/utils/date'
 import { summarize } from '@/utils/stats'
 import type { RangeView } from '@/types/calendar'
-import type { TrackerId, WeekDay } from '@/types/entry'
+import type { DateKey, TrackerId, WeekDay } from '@/types/entry'
 
 // One view for all five trackers: Calendar (the year), Month and Week
 const props = defineProps<{ trackerId: TrackerId }>()
 
+const VIEWS: readonly RangeView[] = ['year', 'month', 'week']
+
 const entries = useEntriesStore()
+const route = useRoute()
+const router = useRouter()
 
 const isLoading = ref(true)
-const view = ref<RangeView>('year')
 
 const tracker = computed(() => TRACKERS[props.trackerId])
 const year = computed(() => entries.selectedYear)
 const isThisYear = computed(() => year.value === yearOf(entries.todayKey))
 const thisMonth = computed(() => monthOf(entries.todayKey))
+const lastMonth = isThisYear.value ? thisMonth.value : 12
 
-// The month view opens on this month, or on December of an earlier year
-const month = ref(isThisYear.value ? thisMonth.value : 12)
+// The chosen view and month are kept in the address (?view=month&month=9), so
+// coming back from the one-day editor returns to the same place, as in the
+// prototype. The month view opens on this month, or December of an earlier year.
+const queryMonth = Number(route.query.month)
+const view = ref<RangeView>(
+  VIEWS.find((option) => option === route.query.view) ?? 'year',
+)
+const month = ref(
+  Number.isInteger(queryMonth) && queryMonth >= 1 && queryMonth <= lastMonth
+    ? queryMonth
+    : lastMonth,
+)
+
+watch([view, month], () => {
+  const query = view.value === 'month' ? { view: view.value, month: month.value } : { view: view.value }
+  void router.replace({ query })
+})
 
 // The days of the month on screen up to today, for its summary and notes
 const monthDays = computed<WeekDay[]>(() =>
@@ -66,6 +87,12 @@ const notesEmpty = computed(
     `No notes ${view.value === 'month' ? `in ${monthName(month.value)}` : 'this week'}. Add one when you log your mood.`,
 )
 
+// Any day on the page (a cell, a week bar, a mood note) opens this tracker's
+// question for that day in the one-day editor
+function openDay(date: DateKey): void {
+  void router.push(editDay(date, tracker.value.step))
+}
+
 // The year on screen and this week (which can reach into last year)
 onMounted(async () => {
   try {
@@ -102,6 +129,7 @@ onMounted(async () => {
       :year="year"
       :entries="entries.entries"
       :today-key="entries.todayKey"
+      @pick="openDay"
     />
 
     <div v-else class="tracker__range">
@@ -112,6 +140,7 @@ onMounted(async () => {
         :year="year"
         :entries="entries.entries"
         :today-key="entries.todayKey"
+        @pick="openDay"
       />
       <WeekBars
         v-else
@@ -119,6 +148,7 @@ onMounted(async () => {
         :days="entries.weekEntries"
         :today-key="entries.todayKey"
         :note="summary.weekNote"
+        @pick="openDay"
       />
       <SummaryCards :summary="summary" />
     </div>
@@ -128,6 +158,7 @@ onMounted(async () => {
       :days="spanDays"
       :caption="notesCaption"
       :empty-text="notesEmpty"
+      @pick="openDay"
     />
   </div>
 </template>

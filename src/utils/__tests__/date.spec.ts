@@ -6,8 +6,10 @@ import {
   dayOf,
   daysInMonth,
   longDate,
+  mediumDate,
   monthName,
   monthOf,
+  parseDateKey,
   shortDate,
   toDateKey,
   weekdayIndex,
@@ -147,5 +149,25 @@ describe('daysBefore', () => {
 
   it('reaches back into last year', () => {
     expect(daysBefore('2027-01-02', 2)).toEqual(['2027-01-01', '2026-12-31'])
+  })
+})
+
+describe('mediumDate', () => {
+  it('shortens the weekday, as the one-day editor shows it', () => {
+    expect(mediumDate('2026-10-04')).toBe('Sun 4 October')
+  })
+})
+
+describe('parseDateKey', () => {
+  it('accepts real dates', () => {
+    expect(parseDateKey('2026-10-04')).toBe('2026-10-04')
+    expect(parseDateKey('2028-02-29')).toBe('2028-02-29')
+  })
+
+  it('refuses anything else', () => {
+    expect(parseDateKey('2026-02-31')).toBeUndefined()
+    expect(parseDateKey('4 October')).toBeUndefined()
+    expect(parseDateKey(undefined)).toBeUndefined()
+    expect(parseDateKey(['2026-10-04'])).toBeUndefined()
   })
 })

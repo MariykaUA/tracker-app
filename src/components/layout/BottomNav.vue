@@ -3,6 +3,7 @@ import { computed, onMounted } from 'vue'
 import { RouterLink, useRoute, type RouteLocationRaw } from 'vue-router'
 import BaseButton from '@/components/base/BaseButton.vue'
 import { isTrackerId, TRACKERS } from '@/constants/trackers'
+import { checkinAt, editDay } from '@/router/links'
 import { useEntriesStore } from '@/stores/entries.store'
 import { isComplete, isLogged, LAST_STEP } from '@/utils/checkin'
 import { yearOf } from '@/utils/date'
@@ -10,8 +11,11 @@ import { yearOf } from '@/utils/date'
 const route = useRoute()
 const entries = useEntriesStore()
 
-// The big button above the nav, as in the prototype. On Today it opens the
-// check-in; on a tracker page or One thing, the check-in at that question.
+// The big button above the nav, as in the prototype:
+// - Today: the check-in ("Check in" / "Edit today")
+// - a tracker page: "Log now" starts the check-in at its question; once today
+//   is logged, "Edit today" opens that question in the one-day editor
+// - One thing: today's one thing in the one-day editor
 const cta = computed<{ label: string; to: RouteLocationRaw } | null>(() => {
   const today = entries.todayEntry
 
@@ -21,16 +25,16 @@ const cta = computed<{ label: string; to: RouteLocationRaw } | null>(() => {
 
   const id = route.params.id
   if (route.name === 'tracker' && isTrackerId(id)) {
-    return {
-      label: isLogged(id, today) ? 'Edit today' : 'Log now',
-      to: { name: 'checkin', query: { step: TRACKERS[id].step } },
-    }
+    const step = TRACKERS[id].step
+    return isLogged(id, today)
+      ? { label: 'Edit today', to: editDay(entries.todayKey, step) }
+      : { label: 'Log now', to: checkinAt(step) }
   }
 
   if (route.name === 'one-thing') {
     return {
       label: today?.imp ? 'Edit today' : 'Write it down',
-      to: { name: 'checkin', query: { step: LAST_STEP } },
+      to: editDay(entries.todayKey, LAST_STEP),
     }
   }
 

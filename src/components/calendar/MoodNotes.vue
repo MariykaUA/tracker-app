@@ -3,15 +3,17 @@ import { computed } from 'vue'
 import { TRACKERS } from '@/constants/trackers'
 import { isLogged } from '@/utils/checkin'
 import { longDate } from '@/utils/date'
-import type { WeekDay } from '@/types/entry'
+import type { DateKey, WeekDay } from '@/types/entry'
 
 // The notes under the mood month and week views, newest first, each with the
-// day's mood colour and word beside it
+// day's mood colour and word beside it. Tapping one opens that day's mood.
 const props = defineProps<{
   days: WeekDay[] // the days on screen, oldest first
   caption: string // "October", "This week"
   emptyText: string
 }>()
+
+defineEmits<{ pick: [date: DateKey] }>()
 
 const notes = computed(() =>
   props.days
@@ -38,20 +40,22 @@ const notes = computed(() =>
     </div>
 
     <ul v-if="notes.length" class="mood-notes__list">
-      <li v-for="note in notes" :key="note.date" class="mood-notes__note">
-        <span
-          class="mood-notes__mood-bar"
-          aria-hidden="true"
-          :style="note.color ? { backgroundColor: note.color } : undefined"
-        ></span>
-        <span class="mood-notes__text">
-          <span class="mood-notes__date">{{ longDate(note.date) }}</span>
-          <span class="mood-notes__body">{{ note.text }}</span>
-          <span class="mood-notes__mood">{{ note.mood }}</span>
-        </span>
-        <svg class="mood-notes__chevron" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24">
-          <path d="M9 6l6 6l-6 6" />
-        </svg>
+      <li v-for="note in notes" :key="note.date">
+        <button type="button" class="mood-notes__note" @click="$emit('pick', note.date)">
+          <span
+            class="mood-notes__mood-bar"
+            aria-hidden="true"
+            :style="note.color ? { backgroundColor: note.color } : undefined"
+          ></span>
+          <span class="mood-notes__text">
+            <span class="mood-notes__date">{{ longDate(note.date) }}</span>
+            <span class="mood-notes__body">{{ note.text }}</span>
+            <span class="mood-notes__mood">{{ note.mood }}</span>
+          </span>
+          <svg class="mood-notes__chevron" aria-hidden="true" width="20" height="20" viewBox="0 0 24 24">
+            <path d="M9 6l6 6l-6 6" />
+          </svg>
+        </button>
       </li>
     </ul>
     <p v-else class="mood-notes__empty">{{ emptyText }}</p>
@@ -93,11 +97,15 @@ const notes = computed(() =>
   display: flex;
   align-items: center;
   gap: $space-3;
+  width: 100%;
   min-height: 64px;
   padding: $space-3 $space-3 $space-3 14px;
   border: $border-card;
   border-radius: $radius-panel;
   background: $color-card-soft;
+  color: $color-ink;
+  text-align: left;
+  @include press;
   @include glass('sm');
 }
 

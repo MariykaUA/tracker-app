@@ -17,13 +17,15 @@ import type { DateKey, TrackerId, WeekDay } from '@/types/entry'
 
 // This week as a chart: bars for sleep and steps (with the goal line), level dots
 // joined by a dotted line for mood, anxiety and crying. Every value is also text:
-// over the bars, and in each day's label.
+// over the bars, and in each day's label. Tapping a day opens it in the one-day editor.
 const props = defineProps<{
   trackerId: TrackerId
   days: WeekDay[] // Monday to Sunday
   todayKey: DateKey
   note: string // "Goal 8 h", "Higher is brighter"
 }>()
+
+defineEmits<{ pick: [date: DateKey] }>()
 
 // The prototype draws the chart 315px wide; it shrinks on narrower screens
 const WIDTH = 315
@@ -89,12 +91,15 @@ const goal = computed(() => (isBars.value ? goalBottom(props.trackerId, scale.va
       </svg>
 
       <div class="week-bars__columns">
-        <span
+        <button
           v-for="column in columns"
           :key="column.cell.date"
-          role="img"
+          type="button"
           class="week-bars__column"
+          :disabled="column.cell.state === 'future'"
           :aria-label="column.cell.label"
+          :aria-current="column.cell.isToday ? 'date' : undefined"
+          @click="$emit('pick', column.cell.date)"
         >
           <span
             v-if="column.shape.value"
@@ -121,7 +126,7 @@ const goal = computed(() => (isBars.value ? goalBottom(props.trackerId, scale.va
           >
             {{ column.letter }}
           </span>
-        </span>
+        </button>
       </div>
     </div>
   </GlassCard>
@@ -187,11 +192,24 @@ $chart-height: 196px;
   grid-template-columns: repeat(7, minmax(0, 1fr));
 }
 
+// Full-height columns, so the whole strip of a day is easy to tap
 .week-bars__column {
   position: relative;
   display: block;
+  width: 100%;
   height: $chart-height;
+  padding: 0;
+  border: 0;
   border-radius: $radius-icon;
+  background: transparent;
+  color: inherit;
+  @include press;
+
+  &:disabled {
+    cursor: default;
+    transform: none;
+    filter: none;
+  }
 }
 
 .week-bars__value {
