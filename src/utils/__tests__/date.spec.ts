@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { dayOf, daysInMonth, monthOf, toDateKey, weekOf, yearOf } from '../date'
+import { dayOf, daysInMonth, longDate, monthOf, toDateKey, weekOf, yearOf } from '../date'
 
 describe('toDateKey', () => {
   it('formats a moment as YYYY-MM-DD', () => {
@@ -80,5 +80,16 @@ describe('weekOf', () => {
       '2026-10-24',
       '2026-10-25',
     ])
+  })
+})
+
+describe('longDate', () => {
+  it('writes the weekday, day and month like the prototype', () => {
+    expect(longDate('2026-10-08')).toBe('Thursday 8 October')
+    expect(longDate('2026-10-04')).toBe('Sunday 4 October')
+  })
+
+  it('knows the weekday across years', () => {
+    expect(longDate('2027-01-01')).toBe('Friday 1 January')
   })
 })
