@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, useTemplateRef, type Component } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import BaseButton from '@/components/base/BaseButton.vue'
 import AnxietyStep from '@/components/checkin/AnxietyStep.vue'
 import CryingStep from '@/components/checkin/CryingStep.vue'
@@ -43,6 +43,7 @@ const POSES: Component[] = [
 const entries = useEntriesStore()
 const status = useStatusStore()
 const router = useRouter()
+const route = useRoute()
 const card = useTemplateRef<HTMLElement>('card')
 
 // Fixed when the check-in opens, so a check-in that runs past midnight
@@ -70,8 +71,14 @@ onMounted(async () => {
   const saved = entries.entriesByYear[yearOf(dateKey)]?.[dateKey]
   draft.value = draftFrom(saved)
   isReady.value = true
-  await showStep(firstGap(saved))
+  await showStep(requestedStep() ?? firstGap(saved))
 })
+
+// ?step=2 opens on that question (a tracker page's "Log now"), if it's a real one
+function requestedStep(): number | undefined {
+  const step = Number(route.query.step)
+  return Number.isInteger(step) && step >= 0 && step <= LAST_STEP ? step : undefined
+}
 
 // Each question is its own screen to screen readers: focus moves to its title
 async function showStep(index: number): Promise<void> {
