@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { isValidPassword, isValidUsername, normalizeUsername, usernameToEmail } from '../auth'
+import {
+  emailToUsername,
+  isValidPassword,
+  isValidUsername,
+  normalizeUsername,
+  usernameToEmail,
+} from '../auth'
 
 describe('normalizeUsername', () => {
   it('trims and lowercases', () => {
@@ -37,5 +43,11 @@ describe('isValidPassword', () => {
 describe('usernameToEmail', () => {
   it('maps the normalized username to the internal address', () => {
     expect(usernameToEmail(' Mariia ')).toBe('mariia@tracker-app.vercel.app')
+  })
+})
+
+describe('emailToUsername', () => {
+  it('gives back the username', () => {
+    expect(emailToUsername('mariia@tracker-app.vercel.app')).toBe('mariia')
   })
 })

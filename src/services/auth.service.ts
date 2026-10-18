@@ -1,9 +1,11 @@
 import { FirebaseError } from 'firebase/app'
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   EmailAuthProvider,
   linkWithCredential,
   onAuthStateChanged,
+  reauthenticateWithCredential,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
   type Unsubscribe,
@@ -11,6 +13,7 @@ import {
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { auth, db } from '@/firebase'
+import { deleteUserData } from './entries.service'
 import { normalizeUsername, usernameToEmail } from '@/utils/auth'
 import type { AuthErrorCode, NewAccount, UserProfile } from '@/types/auth'
 
@@ -85,4 +88,20 @@ export async function createAccount({ name, username, password }: NewAccount): P
 
 export async function signOut(): Promise<void> {
   await firebaseSignOut(auth)
+}
+
+// Deleting needs a recent login, so the password is checked again first; a
+// wrong one or no connection stops it before anything is deleted. Then the
+// data, then the Auth user: once that's gone the rules no longer allow the rest.
+export async function deleteAccount(password: string): Promise<void> {
+  const user = auth.currentUser
+  if (!user?.email) throw new Error('Not signed in')
+
+  try {
+    await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, password))
+    await deleteUserData(user.uid)
+    await deleteUser(user)
+  } catch (error) {
+    throw toAuthError(error)
+  }
 }
