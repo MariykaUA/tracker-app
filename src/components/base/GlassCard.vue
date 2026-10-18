@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The prototype's large white glass card. A <section> by default, so with an
-// aria-label it's a named region (the calendars use it that way).
-withDefaults(defineProps<{ as?: 'section' | 'div' }>(), { as: 'section' })
+// aria-label it's a named region (the calendars use it that way); a <form> on sign-in.
+withDefaults(defineProps<{ as?: 'section' | 'div' | 'form' }>(), { as: 'section' })
 </script>
 
 <template>

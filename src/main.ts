@@ -15,8 +15,8 @@ app.use(router)
 
 const entries = useEntriesStore()
 
-// Sign in and get today's date from the server before mounting,
-// so every view can rely on uid and todayKey being set. Waiting for the
+// Restore the saved session and get today's date from the server before
+// mounting, so every view can rely on them being set. Waiting for the
 // router too means the first page load isn't treated as a route change.
 await Promise.all([useAuthStore().init(), entries.refreshToday(), router.isReady()])
 

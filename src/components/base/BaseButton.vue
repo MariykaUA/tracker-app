@@ -8,8 +8,9 @@ withDefaults(
     size?: 'md' | 'sm' // sm: the 44 × 44 square icon button
     to?: RouteLocationRaw
     disabled?: boolean
+    type?: 'button' | 'submit' // a form's main button submits it
   }>(),
-  { variant: 'primary', size: 'md', to: undefined, disabled: false },
+  { variant: 'primary', size: 'md', to: undefined, disabled: false, type: 'button' },
 )
 </script>
 
@@ -24,7 +25,7 @@ withDefaults(
   </RouterLink>
   <button
     v-else
-    type="button"
+    :type="type"
     class="base-button"
     :class="[`base-button--${variant}`, `base-button--${size}`]"
     :disabled="disabled"
