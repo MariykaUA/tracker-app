@@ -22,6 +22,7 @@ $color-chip: #fbe6ee; // round check badge on tiles (ink border and tick on it: 
 $color-sunken: rgba(122, 90, 160, 0.08); // pressed-in areas: text fields, range tabs group
 $color-card-soft: rgba(255, 255, 255, 0.7); // translucent summary panels and list rows
 $color-focus: $color-ink; // focus ring: 10.1:1 on bg
+$color-nav-icon: #ffc8dd; // fill of the active bottom nav icon (outlined in ink)
 
 // Colours: highlight card ("one thing" on Home, Done summary)
 $color-peach: #ffd6bc; // fill (ink on it: 9.0:1, ink-soft 6.0:1)
@@ -220,6 +221,10 @@ $shadow-sheet:
   inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
   inset 0 0 0 1px rgba(255, 255, 255, 0.35),
   inset 0 -14px 28px rgba(255, 255, 255, 0.22);
+$shadow-nav:
+  0 10px 20px rgba(120, 90, 160, 0.18),
+  inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+  inset 0 0 0 1px rgba(255, 255, 255, 0.3);
 $shadow-pressed:
   inset 0 2px 6px rgba(120, 90, 160, 0.24),
   inset 0 -1px 0 rgba(255, 255, 255, 0.75);
