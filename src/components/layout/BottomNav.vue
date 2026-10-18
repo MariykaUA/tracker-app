@@ -4,15 +4,14 @@ import { RouterLink, useRoute, type RouteLocationRaw } from 'vue-router'
 import BaseButton from '@/components/base/BaseButton.vue'
 import { isTrackerId, TRACKERS } from '@/constants/trackers'
 import { useEntriesStore } from '@/stores/entries.store'
-import { isComplete, isLogged } from '@/utils/checkin'
+import { isComplete, isLogged, LAST_STEP } from '@/utils/checkin'
 import { yearOf } from '@/utils/date'
 
 const route = useRoute()
 const entries = useEntriesStore()
 
 // The big button above the nav, as in the prototype. On Today it opens the
-// check-in; on a tracker page, the check-in at that tracker's question. One thing
-// gets its own once the one-day editor exists.
+// check-in; on a tracker page or One thing, the check-in at that question.
 const cta = computed<{ label: string; to: RouteLocationRaw } | null>(() => {
   const today = entries.todayEntry
 
@@ -25,6 +24,13 @@ const cta = computed<{ label: string; to: RouteLocationRaw } | null>(() => {
     return {
       label: isLogged(id, today) ? 'Edit today' : 'Log now',
       to: { name: 'checkin', query: { step: TRACKERS[id].step } },
+    }
+  }
+
+  if (route.name === 'one-thing') {
+    return {
+      label: today?.imp ? 'Edit today' : 'Write it down',
+      to: { name: 'checkin', query: { step: LAST_STEP } },
     }
   }
 
