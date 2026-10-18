@@ -272,6 +272,9 @@ $shadow-tile-shine: inset 0 2px 0 rgba(255, 255, 255, 0.55); // under each tile'
 $shadow-tile-selected:
   inset 0 0 0 3px $color-accent,
   0 4px 0 0 $color-tile-selected;
+$shadow-icon-button: // pencil on the highlight card
+  0 3px 0 $color-primary-edge,
+  inset 0 2px 0 rgba(255, 255, 255, 0.55);
 $shadow-badge: // round tick on the Done mascot
   0 4px 0 $color-primary-edge,
   0 10px 16px rgba(238, 127, 169, 0.3);

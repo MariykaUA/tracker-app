@@ -50,6 +50,23 @@
   }
 }
 
+// The prototype's tj-press: tappable cards brighten on hover and squash when pressed
+@mixin press {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform $duration-fast $ease-spring,
+    filter $duration-fast ease;
+
+  &:hover {
+    filter: brightness(1.04);
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
 // Fills for the parts of the mascot SVGs in components/mascot/, so the drawings
 // use tokens instead of hex values. Include once in each mascot component.
 @mixin pebble-paint {

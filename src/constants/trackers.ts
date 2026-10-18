@@ -25,6 +25,10 @@ export interface TrackerDef {
 
 export const TRACKER_ORDER: readonly TrackerId[] = ['sleep', 'steps', 'mood', 'anxiety', 'crying']
 
+// For values from outside the code, like the :id in /tracker/:id
+export const isTrackerId = (value: unknown): value is TrackerId =>
+  TRACKER_ORDER.includes(value as TrackerId)
+
 export const RESTED_LABELS = ['Drained', 'Tired', 'Okay', 'Rested', 'Fully rested'] as const
 export const MOOD_LABELS = ['Very Bad', 'Not Good', 'Okay', 'Good', 'Great'] as const
 export const ANXIETY_LABELS = ['Calm', 'Mild', 'High'] as const
