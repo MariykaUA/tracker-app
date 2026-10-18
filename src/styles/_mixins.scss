@@ -67,6 +67,25 @@
   }
 }
 
+// The prototype's tj-cell: calendar days squash with a spring when tapped;
+// days still to come are disabled and stay put
+@mixin cell-press {
+  padding: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 140ms $ease-spring;
+
+  &:active {
+    transform: scale(0.78);
+  }
+
+  &:disabled {
+    cursor: default;
+    transform: none;
+  }
+}
+
 // Fills for the parts of the mascot SVGs in components/mascot/, so the drawings
 // use tokens instead of hex values. Include once in each mascot component.
 @mixin pebble-paint {
