@@ -1,0 +1,35 @@
+import type { DateKey } from '@/types/entry'
+
+// The device's time zone, e.g. "Europe/Zurich"
+export const TIME_ZONE = Intl.DateTimeFormat().resolvedOptions().timeZone
+
+// A moment in time as "2026-10-17" in the given time zone.
+// Don't use toISOString(): it's UTC and shifts the day after midnight in Zürich.
+export const toDateKey = (date: Date, timeZone: string = TIME_ZONE): DateKey =>
+  new Intl.DateTimeFormat('sv-SE', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(date)
+
+export const yearOf = (dateKey: DateKey): number => Number(dateKey.slice(0, 4))
+export const monthOf = (dateKey: DateKey): number => Number(dateKey.slice(5, 7))
+export const dayOf = (dateKey: DateKey): number => Number(dateKey.slice(8, 10))
+
+export const daysInMonth = (year: number, month: number): number =>
+  new Date(year, month, 0).getDate()
+
+// Calendar dates are counted in UTC, so daylight-saving changes never skip or repeat a day
+const fromParts = (year: number, month: number, day: number): DateKey =>
+  toDateKey(new Date(Date.UTC(year, month - 1, day)), 'UTC')
+
+// "2026-10-08" → the seven date keys of its week, Monday first
+export const weekOf = (dateKey: DateKey): DateKey[] => {
+  const year = yearOf(dateKey)
+  const month = monthOf(dateKey)
+  const day = dayOf(dateKey)
+  const sinceMonday = (new Date(Date.UTC(year, month - 1, day)).getUTCDay() + 6) % 7
+
+  return Array.from({ length: 7 }, (_, i) => fromParts(year, month, day - sinceMonday + i))
+}

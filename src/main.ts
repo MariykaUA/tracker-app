@@ -6,13 +6,22 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { useAuthStore } from './stores/auth.store'
+import { useEntriesStore } from './stores/entries.store'
 
 const app = createApp(App)
 
 app.use(createPinia())
 app.use(router)
 
-// Sign in before mounting, so every view can rely on uid being set
-await useAuthStore().init()
+const entries = useEntriesStore()
+
+// Sign in and get today's date from the server before mounting,
+// so every view can rely on uid and todayKey being set
+await Promise.all([useAuthStore().init(), entries.refreshToday()])
+
+// An app left open overnight moves to the new day when it comes back
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') void entries.refreshToday()
+})
 
 app.mount('#app')
