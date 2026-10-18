@@ -65,7 +65,7 @@ async function submit(): Promise<void> {
 
 <template>
   <AuthScreen
-    title="Nice to see you"
+    title="Nice to see you!"
     lead="Sign in to see your week."
     submit-label="Sign in"
     :busy="busy"
