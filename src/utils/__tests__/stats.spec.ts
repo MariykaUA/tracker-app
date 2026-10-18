@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { summaryValue } from '../stats'
+import { summarize, summaryValue } from '../stats'
 import type { Entry } from '@/types/entry'
 
 const day = (date: string, values: Partial<Entry>): Entry => ({
@@ -40,5 +40,40 @@ describe('summaryValue', () => {
     expect(summaryValue('crying', week)).toBe('1 day')
     expect(summaryValue('crying', [week[1], week[1]])).toBe('2 days')
     expect(summaryValue('crying', [week[0]])).toBe('No tears')
+  })
+})
+
+describe('summarize', () => {
+  it('gives sleep the week view stats of the Sleep week artboard', () => {
+    expect(summarize('sleep', week)).toMatchObject({
+      stat1: 'Average slept',
+      stat1Value: '7.2 h',
+      stat2: 'Felt on average',
+      stat2Value: 'Okay',
+      weekNote: 'Goal 8 h',
+    })
+  })
+
+  it('counts goal days, calm days and days with tears out of the days logged', () => {
+    expect(summarize('steps', week).stat2Value).toBe('0 of 3')
+    expect(summarize('anxiety', week).stat2Value).toBe('1 of 3')
+    expect(summarize('crying', week).stat1Value).toBe('1 of 3')
+  })
+
+  it('counts mood notes on every day, even without a mood', () => {
+    const notes = [
+      day('2026-10-01', { mood: 'good', note: 'Long walk' }),
+      day('2026-10-02', { note: 'Slept badly' }),
+      day('2026-10-03', { mood: 'okay' }),
+    ]
+    expect(summarize('mood', notes).stat2Value).toBe('2')
+  })
+
+  it('says "Not yet" for every value of an empty span', () => {
+    expect(summarize('steps', [undefined])).toMatchObject({
+      stat1Value: 'Not yet',
+      stat2Value: 'Not yet',
+      weekNote: 'Goal 15,000',
+    })
   })
 })
