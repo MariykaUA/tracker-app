@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { useTemplateRef, watch } from 'vue'
-import { RouterView, useRoute } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import PageAction from '@/components/layout/PageAction.vue'
+import { useAuthStore } from '@/stores/auth.store'
 import { useStatusStore } from '@/stores/status.store'
 
 const route = useRoute()
+const router = useRouter()
+const auth = useAuthStore()
 const status = useStatusStore()
 const main = useTemplateRef<HTMLElement>('main')
 const screen = useTemplateRef<HTMLElement>('screen')
@@ -20,6 +23,15 @@ watch(
     screen.value.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true })
   },
   { flush: 'post' },
+)
+
+// Signed out while a screen is open (sign out, another tab, an expired
+// session): leave for Sign in rather than wait for the next navigation
+watch(
+  () => auth.isSignedIn,
+  (signedIn) => {
+    if (!signedIn && !route.meta.guest) void router.replace({ name: 'sign-in' })
+  },
 )
 
 // Focused directly: a plain #main jump would also go through the router
