@@ -15,4 +15,12 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Tokens and mixins in every component and main.scss, without importing them each time
+        additionalData: `@use "@/styles/tokens" as *;\n@use "@/styles/mixins" as *;\n`,
+      },
+    },
+  },
 })
