@@ -5,10 +5,12 @@ import TrackerWeekCard from '@/components/home/TrackerWeekCard.vue'
 import PebbleSmiling from '@/components/mascot/PebbleSmiling.vue'
 import { TRACKER_ORDER } from '@/constants/trackers'
 import { editDay } from '@/router/links'
+import { useAuthStore } from '@/stores/auth.store'
 import { useEntriesStore } from '@/stores/entries.store'
 import { LAST_STEP } from '@/utils/checkin'
 import { longDate } from '@/utils/date'
 
+const auth = useAuthStore()
 const entries = useEntriesStore()
 const isLoading = ref(true)
 
@@ -32,7 +34,10 @@ onMounted(async () => {
     <header class="home__header">
       <div class="home__titles">
         <p class="home__date">{{ longDate(entries.todayKey) }}</p>
-        <h1 tabindex="-1" class="home__title">Your week</h1>
+        <!-- The account's name follows the title: "Your week, Mariia" -->
+        <h1 tabindex="-1" class="home__title">
+          Your week<template v-if="auth.name">, {{ auth.name }}</template>
+        </h1>
       </div>
       <PebbleSmiling />
     </header>
@@ -83,6 +88,7 @@ onMounted(async () => {
 }
 
 .home__title {
+  overflow-wrap: anywhere; // a long name wraps instead of widening the header
   @include type('title');
 }
 
