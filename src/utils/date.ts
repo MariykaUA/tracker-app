@@ -21,7 +21,7 @@ export const daysInMonth = (year: number, month: number): number =>
   new Date(year, month, 0).getDate()
 
 // Calendar dates are counted in UTC, so daylight-saving changes never skip or repeat a day
-const fromParts = (year: number, month: number, day: number): DateKey =>
+export const dateKeyOf = (year: number, month: number, day: number): DateKey =>
   toDateKey(new Date(Date.UTC(year, month - 1, day)), 'UTC')
 
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -40,6 +40,23 @@ const MONTHS = [
   'December',
 ]
 
+// 10 → "October"
+export const monthName = (month: number): string => MONTHS[month - 1] ?? ''
+
+// "2026-10-08" → 3: days since Monday, for laying out Monday-first weeks
+export const weekdayIndex = (dateKey: DateKey): number =>
+  (new Date(Date.UTC(yearOf(dateKey), monthOf(dateKey) - 1, dayOf(dateKey))).getUTCDay() + 6) % 7
+
+// "2026-10-08" → "8 October", the year grid's day labels
+export const shortDate = (dateKey: DateKey): string =>
+  `${dayOf(dateKey)} ${monthName(monthOf(dateKey))}`
+
+// First and last day → "5 to 11 October", or "28 September to 4 October" across months
+export const dateRange = (first: DateKey, last: DateKey): string =>
+  monthOf(first) === monthOf(last)
+    ? `${dayOf(first)} to ${shortDate(last)}`
+    : `${shortDate(first)} to ${shortDate(last)}`
+
 // "2026-10-08" → "Thursday 8 October", as the prototype writes dates
 export const longDate = (dateKey: DateKey): string => {
   const year = yearOf(dateKey)
@@ -47,7 +64,7 @@ export const longDate = (dateKey: DateKey): string => {
   const day = dayOf(dateKey)
   const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay()
 
-  return `${WEEKDAYS[weekday]} ${day} ${MONTHS[month - 1]}`
+  return `${WEEKDAYS[weekday]} ${day} ${monthName(month)}`
 }
 
 // "2026-10-08" → the seven date keys of its week, Monday first
@@ -55,7 +72,7 @@ export const weekOf = (dateKey: DateKey): DateKey[] => {
   const year = yearOf(dateKey)
   const month = monthOf(dateKey)
   const day = dayOf(dateKey)
-  const sinceMonday = (new Date(Date.UTC(year, month - 1, day)).getUTCDay() + 6) % 7
+  const sinceMonday = weekdayIndex(dateKey)
 
-  return Array.from({ length: 7 }, (_, i) => fromParts(year, month, day - sinceMonday + i))
+  return Array.from({ length: 7 }, (_, i) => dateKeyOf(year, month, day - sinceMonday + i))
 }

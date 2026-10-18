@@ -1,5 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { dayOf, daysInMonth, longDate, monthOf, toDateKey, weekOf, yearOf } from '../date'
+import {
+  dateKeyOf,
+  dateRange,
+  dayOf,
+  daysInMonth,
+  longDate,
+  monthName,
+  monthOf,
+  shortDate,
+  toDateKey,
+  weekdayIndex,
+  weekOf,
+  yearOf,
+} from '../date'
 
 describe('toDateKey', () => {
   it('formats a moment as YYYY-MM-DD', () => {
@@ -91,5 +104,37 @@ describe('longDate', () => {
 
   it('knows the weekday across years', () => {
     expect(longDate('2027-01-01')).toBe('Friday 1 January')
+  })
+})
+
+describe('dateKeyOf', () => {
+  it('builds a date key, rolling over month ends', () => {
+    expect(dateKeyOf(2026, 10, 8)).toBe('2026-10-08')
+    expect(dateKeyOf(2026, 12, 32)).toBe('2027-01-01')
+  })
+})
+
+describe('monthName, shortDate', () => {
+  it('name months and days like the prototype', () => {
+    expect(monthName(10)).toBe('October')
+    expect(shortDate('2026-10-01')).toBe('1 October')
+  })
+})
+
+describe('weekdayIndex', () => {
+  it('counts days since Monday', () => {
+    expect(weekdayIndex('2026-10-05')).toBe(0)
+    expect(weekdayIndex('2026-10-08')).toBe(3)
+    expect(weekdayIndex('2026-10-11')).toBe(6)
+  })
+})
+
+describe('dateRange', () => {
+  it('names the month once inside one month', () => {
+    expect(dateRange('2026-10-05', '2026-10-11')).toBe('5 to 11 October')
+  })
+
+  it('names both months across a month end', () => {
+    expect(dateRange('2026-09-28', '2026-10-04')).toBe('28 September to 4 October')
   })
 })
