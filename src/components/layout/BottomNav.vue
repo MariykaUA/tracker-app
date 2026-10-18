@@ -4,6 +4,7 @@ import { RouterLink, useRoute, type RouteLocationRaw } from 'vue-router'
 import BaseButton from '@/components/base/BaseButton.vue'
 import { isTrackerId, TRACKERS } from '@/constants/trackers'
 import { checkinAt, editDay } from '@/router/links'
+import { buzz, TAP } from '@/services/haptics.service'
 import { useEntriesStore } from '@/stores/entries.store'
 import { isComplete, isLogged, LAST_STEP } from '@/utils/checkin'
 import { yearOf } from '@/utils/date'
@@ -16,25 +17,31 @@ const entries = useEntriesStore()
 // - a tracker page: "Log now" starts the check-in at its question; once today
 //   is logged, "Edit today" opens that question in the one-day editor
 // - One thing: today's one thing in the one-day editor
-const cta = computed<{ label: string; to: RouteLocationRaw } | null>(() => {
+// Opening the editor gives the prototype's tap of vibration; the check-in doesn't.
+const cta = computed<{ label: string; to: RouteLocationRaw; buzz: boolean } | null>(() => {
   const today = entries.todayEntry
 
   if (route.name === 'home') {
-    return { label: isComplete(today) ? 'Edit today' : 'Check in', to: { name: 'checkin' } }
+    return {
+      label: isComplete(today) ? 'Edit today' : 'Check in',
+      to: { name: 'checkin' },
+      buzz: false,
+    }
   }
 
   const id = route.params.id
   if (route.name === 'tracker' && isTrackerId(id)) {
     const step = TRACKERS[id].step
     return isLogged(id, today)
-      ? { label: 'Edit today', to: editDay(entries.todayKey, step) }
-      : { label: 'Log now', to: checkinAt(step) }
+      ? { label: 'Edit today', to: editDay(entries.todayKey, step), buzz: true }
+      : { label: 'Log now', to: checkinAt(step), buzz: false }
   }
 
   if (route.name === 'one-thing') {
     return {
       label: today?.imp ? 'Edit today' : 'Write it down',
       to: editDay(entries.todayKey, LAST_STEP),
+      buzz: true,
     }
   }
 
@@ -50,7 +57,11 @@ onMounted(() => {
 <template>
   <div class="bottom-nav">
     <div v-if="cta" class="bottom-nav__cta">
-      <BaseButton :to="cta.to" class="bottom-nav__cta-button">
+      <BaseButton
+        :to="cta.to"
+        class="bottom-nav__cta-button"
+        @click="cta.buzz && buzz(TAP)"
+      >
         <span>{{ cta.label }}</span>
         <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24">
           <path d="M5 12h14M13 6l6 6l-6 6" />

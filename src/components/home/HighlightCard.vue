@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, type RouteLocationRaw } from 'vue-router'
+import { buzz, TAP } from '@/services/haptics.service'
 import oneThingIcon from '@/assets/icons/icon-one-thing.png'
 
 // Today's "one thing" at the top of Home; where it leads is passed in
@@ -20,7 +21,7 @@ const label = computed(() =>
 </script>
 
 <template>
-  <RouterLink :to="to" class="highlight-card" :aria-label="label">
+  <RouterLink :to="to" class="highlight-card" :aria-label="label" @click="buzz(TAP)">
     <img class="highlight-card__icon" :src="oneThingIcon" alt="" width="52" height="52" />
     <span class="highlight-card__text">
       <span class="highlight-card__title">Today's highlight?</span>

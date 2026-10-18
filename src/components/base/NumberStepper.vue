@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useId } from 'vue'
 import BaseButton from './BaseButton.vue'
+import { buzz, TAP } from '@/services/haptics.service'
 
 // A whole-number field with −/+ buttons. The model is the field's text:
 // digits only, '' while empty, so "nothing entered" and 0 stay different.
@@ -34,6 +35,7 @@ function onInput(event: Event): void {
 }
 
 function change(delta: number): void {
+  buzz(TAP)
   model.value = String(Math.min(props.max, Math.max(0, current.value + delta)))
 }
 </script>

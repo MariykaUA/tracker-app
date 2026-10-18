@@ -10,6 +10,7 @@ import YearGrid from '@/components/calendar/YearGrid.vue'
 import { TRACKER_ICONS } from '@/constants/icons'
 import { TRACKERS } from '@/constants/trackers'
 import { editDay } from '@/router/links'
+import { buzz, TAP } from '@/services/haptics.service'
 import { useEntriesStore } from '@/stores/entries.store'
 import { dateKeyOf, dateRange, daysInMonth, monthName, monthOf, yearOf } from '@/utils/date'
 import { summarize } from '@/utils/stats'
@@ -90,6 +91,7 @@ const notesEmpty = computed(
 // Any day on the page (a cell, a week bar, a mood note) opens this tracker's
 // question for that day in the one-day editor
 function openDay(date: DateKey): void {
+  buzz(TAP)
   void router.push(editDay(date, tracker.value.step))
 }
 
