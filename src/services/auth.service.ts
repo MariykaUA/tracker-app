@@ -3,8 +3,10 @@ import {
   createUserWithEmailAndPassword,
   EmailAuthProvider,
   linkWithCredential,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut as firebaseSignOut,
+  type Unsubscribe,
   type User,
 } from 'firebase/auth'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
@@ -40,10 +42,10 @@ function toAuthError(error: unknown): unknown {
 
 const userRef = (uid: string) => doc(db, 'users', uid)
 
-// The saved session (anonymous or not), or null; waits for Firebase to restore it
-export async function getCurrentUser(): Promise<User | null> {
-  await auth.authStateReady()
-  return auth.currentUser
+// Calls back with the current user (anonymous or not, or null): first once the
+// saved session is restored, then on every sign-in and sign-out, in any tab
+export function watchUser(callback: (user: User | null) => void): Unsubscribe {
+  return onAuthStateChanged(auth, callback)
 }
 
 // The name shown on Home, '' if the account has none yet
@@ -64,9 +66,10 @@ export async function signIn(username: string, password: string): Promise<User> 
 // entries are kept; otherwise a new account is made
 export async function createAccount({ name, username, password }: NewAccount): Promise<User> {
   const email = usernameToEmail(username)
-  const current = auth.currentUser
 
   try {
+    // Only an anonymous session is linked; a signed-in account is never touched
+    const current = auth.currentUser
     const { user } = current?.isAnonymous
       ? await linkWithCredential(current, EmailAuthProvider.credential(email, password))
       : await createUserWithEmailAndPassword(auth, email, password)

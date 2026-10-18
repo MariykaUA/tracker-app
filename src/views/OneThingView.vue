@@ -47,7 +47,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="one-thing motion-rise" :aria-busy="isLoading">
+  <div class="one-thing motion-rise" :aria-busy="isLoading || entries.isLoading">
     <header class="one-thing__header">
       <div class="one-thing__titles">
         <p class="one-thing__date">{{ longDate(entries.todayKey) }}</p>
