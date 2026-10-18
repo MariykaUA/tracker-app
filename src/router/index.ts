@@ -26,6 +26,12 @@ const router = createRouter({
       meta: { title: 'One thing of today', nav: true },
     },
     {
+      path: '/checkin',
+      name: 'checkin',
+      component: () => import('../views/CheckinView.vue'),
+      meta: { title: 'Check-in' },
+    },
+    {
       path: '/done',
       name: 'done',
       component: () => import('../views/DoneView.vue'),
