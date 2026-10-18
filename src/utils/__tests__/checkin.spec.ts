@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { canContinue, draftFrom, firstGap, isComplete, stepValues } from '../checkin'
+import { canContinue, draftFrom, firstGap, hasAnswer, isComplete, stepValues } from '../checkin'
 import type { Entry } from '@/types/entry'
 
 const day = (values: Partial<Entry> = {}): Entry => ({
@@ -94,5 +94,19 @@ describe('stepValues', () => {
 
   it('trims the one thing', () => {
     expect(stepValues(5, draft)).toEqual({ imp: 'An hour outside' })
+  })
+})
+
+describe('hasAnswer', () => {
+  it('checks the tracker behind a question', () => {
+    expect(hasAnswer(0, full)).toBe(true)
+    expect(hasAnswer(2, day({ hours: 8 }))).toBe(false)
+    expect(hasAnswer(1, undefined)).toBe(false)
+  })
+
+  it('needs written text for the one thing', () => {
+    expect(hasAnswer(5, full)).toBe(false)
+    expect(hasAnswer(5, day({ imp: 'A walk' }))).toBe(true)
+    expect(hasAnswer(5, day({ imp: '' }))).toBe(false)
   })
 })

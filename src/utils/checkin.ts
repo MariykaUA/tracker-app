@@ -16,6 +16,13 @@ export const isLogged = (tracker: TrackerId, entry: Entry | undefined): boolean 
 export const isComplete = (entry: Entry | undefined): boolean =>
   TRACKER_ORDER.every((tracker) => isLogged(tracker, entry))
 
+// Whether a day already has an answer for one question (the one-day editor says
+// "Editing a saved day" then, and "Nothing here yet" otherwise)
+export const hasAnswer = (step: number, entry: Entry | undefined): boolean => {
+  const tracker = TRACKER_ORDER[step]
+  return tracker ? isLogged(tracker, entry) : !!entry?.imp
+}
+
 // The check-in opens on the first tracker not logged yet, or at the start
 export const firstGap = (entry: Entry | undefined): number => {
   const index = TRACKER_ORDER.findIndex((tracker) => !isLogged(tracker, entry))
