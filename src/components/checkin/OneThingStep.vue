@@ -30,10 +30,13 @@ const hintId = useId()
 </template>
 
 <style scoped lang="scss">
+// The prototype keeps an empty label row above the field, 8px with its gap,
+// which sets where the field sits in the card
 .one-thing-step {
   display: flex;
   flex-direction: column;
   gap: $space-2;
+  padding-top: $space-2;
 }
 
 .one-thing-step__field {
