@@ -6,6 +6,7 @@ import CheckinCard from '@/components/checkin/CheckinCard.vue'
 import DaySwitcher from '@/components/checkin/DaySwitcher.vue'
 import ProgressStepper from '@/components/layout/ProgressStepper.vue'
 import { useEntriesStore } from '@/stores/entries.store'
+import { buzz, SUCCESS, TAP } from '@/services/haptics.service'
 import { useStatusStore } from '@/stores/status.store'
 import {
   CHECKIN_STEPS,
@@ -90,6 +91,7 @@ async function shiftDay(delta: number): Promise<void> {
   const day = dateKeyOf(yearOf(date.value), monthOf(date.value), dayOf(date.value) + delta)
   if (day < firstDay || day > today) return
 
+  buzz(TAP)
   date.value = day
   await load(day)
   void router.replace({ query: { ...route.query, date: day } })
@@ -103,8 +105,12 @@ function save(values: Partial<DayValues>): void {
   })
 }
 
+// A tap for the next question; the longer buzz when a day is saved or the check-in is done
 function next(): void {
   save(stepValues(step.value, draft.value))
+  const finished = isEditor || step.value === LAST_STEP
+  buzz(finished ? SUCCESS : TAP)
+
   if (isEditor) leave()
   else if (step.value < LAST_STEP) void showStep(step.value + 1)
   // Replaced, so Back from Done doesn't reopen the last question
