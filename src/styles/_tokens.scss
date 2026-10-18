@@ -24,6 +24,10 @@ $color-card-soft: rgba(255, 255, 255, 0.7); // translucent summary panels and li
 $color-focus: $color-ink; // focus ring: 10.1:1 on bg
 $color-nav-icon: #ffc8dd; // fill of the active bottom nav icon (outlined in ink)
 
+// Colours: delete account (artboards 21 and 22)
+$color-danger: #8b2635; // "Delete account" text on white: 8.6:1; white on the "Delete forever" fill: 8.6:1
+$color-danger-edge: #231c07; // "Delete forever" 3D bottom edge
+
 // Colours: highlight card ("one thing" on Home, Done summary)
 $color-peach: #ffd6bc; // fill (ink on it: 9.0:1, ink-soft 6.0:1)
 $color-peach-border: #f7c3a1;
@@ -117,6 +121,13 @@ $type-styles: (
   'title-xs': (
       family: $font-display,
       size: 1.5rem,
+      line: 1.75rem,
+      weight: 600,
+    ),
+  // 22/28 account details
+  'detail': (
+      family: $font-display,
+      size: 1.375rem,
       line: 1.75rem,
       weight: 600,
     ),
@@ -309,6 +320,10 @@ $shadow-btn-sm:
 $shadow-btn-sm-active:
   0 1px 0 $color-edge,
   inset 0 2px 0 #ffffff;
+$shadow-btn-danger:
+  0 4px 0 $color-danger-edge,
+  0 10px 16px rgba(139, 38, 53, 0.28),
+  inset 0 2px 0 rgba(255, 255, 255, 0.25);
 $shadow-btn-tab:
   0 3px 0 $color-edge,
   inset 0 2px 0 rgba(255, 255, 255, 0.7);
