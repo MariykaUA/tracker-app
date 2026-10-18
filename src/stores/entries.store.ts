@@ -94,6 +94,13 @@ export const useEntriesStore = defineStore('entries', () => {
     }
   }
 
+  // Forgets the loaded entries when the account changes (sign out, sign in)
+  function clear(): void {
+    years.value = []
+    entriesByYear.value = {}
+    selectedYear.value = todayYear.value
+  }
+
   return {
     todayKey,
     selectedYear,
@@ -109,5 +116,6 @@ export const useEntriesStore = defineStore('entries', () => {
     fetchWeek,
     setYear,
     save,
+    clear,
   }
 })

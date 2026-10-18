@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router'
 import { isTrackerId, TRACKERS } from '@/constants/trackers'
+import { useAuthStore } from '@/stores/auth.store'
 import HomeView from '../views/HomeView.vue'
 
 declare module 'vue-router' {
@@ -8,6 +9,8 @@ declare module 'vue-router' {
     title?: string | ((to: RouteLocationNormalized) => string)
     // Shows the bottom nav (the tab screens; not the check-in flow or Done)
     nav?: boolean
+    // Sign-in pages: only for signed-out users; everything else needs an account
+    guest?: boolean
   }
 }
 
@@ -50,7 +53,28 @@ const router = createRouter({
       component: () => import('../views/DoneView.vue'),
       meta: { title: "You're done for today" },
     },
+    {
+      path: '/sign-in',
+      name: 'sign-in',
+      component: () => import('../views/SignInView.vue'),
+      meta: { title: 'Sign in', guest: true },
+    },
+    {
+      path: '/create-account',
+      name: 'create-account',
+      component: () => import('../views/CreateAccountView.vue'),
+      meta: { title: 'Create an account', guest: true },
+    },
   ],
+})
+
+// Signed-out (and anonymous) users go to Sign in; signed-in users skip the sign-in pages
+router.beforeEach(async (to) => {
+  const auth = useAuthStore()
+  await auth.init()
+
+  if (to.meta.guest) return auth.isSignedIn ? { name: 'home', replace: true } : true
+  return auth.isSignedIn || { name: 'sign-in', replace: true }
 })
 
 // Each page gets its own title, so screen reader users and tabs know where they are
