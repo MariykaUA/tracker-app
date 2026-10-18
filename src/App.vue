@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTemplateRef } from 'vue'
+import { useTemplateRef, watch } from 'vue'
 import { RouterView, useRoute } from 'vue-router'
 import BottomNav from '@/components/layout/BottomNav.vue'
 import { useStatusStore } from '@/stores/status.store'
@@ -7,6 +7,18 @@ import { useStatusStore } from '@/stores/status.store'
 const route = useRoute()
 const status = useStatusStore()
 const main = useTemplateRef<HTMLElement>('main')
+
+// On every page change (not the first load), start the new screen at the top and
+// move focus to its <h1>, so screen reader users hear which page opened
+watch(
+  () => route.path,
+  () => {
+    if (!main.value) return
+    main.value.scrollTop = 0
+    main.value.querySelector<HTMLElement>('h1')?.focus({ preventScroll: true })
+  },
+  { flush: 'post' },
+)
 
 // Focused directly: a plain #main jump would also go through the router
 function skipToContent(): void {
