@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { RouterLink } from 'vue-router'
 import HighlightCard from '@/components/home/HighlightCard.vue'
 import TrackerWeekCard from '@/components/home/TrackerWeekCard.vue'
 import PebbleSmiling from '@/components/mascot/PebbleSmiling.vue'
@@ -39,7 +40,10 @@ onMounted(async () => {
           Your week<template v-if="auth.name">, {{ auth.name }}</template>
         </h1>
       </div>
-      <PebbleSmiling />
+      <!-- Pebble is the way to the Account screen (artboard 20) -->
+      <RouterLink :to="{ name: 'account' }" aria-label="Your account" class="home__account">
+        <PebbleSmiling />
+      </RouterLink>
     </header>
 
     <HighlightCard :text="entries.todayEntry?.imp" :to="editHighlight" />
@@ -90,6 +94,13 @@ onMounted(async () => {
 .home__title {
   overflow-wrap: anywhere; // a long name wraps instead of widening the header
   @include type('title');
+}
+
+.home__account {
+  flex: none;
+  display: block;
+  border-radius: $radius-row;
+  @include press;
 }
 
 .home__trackers {
