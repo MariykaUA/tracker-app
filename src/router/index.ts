@@ -25,6 +25,12 @@ const router = createRouter({
       component: () => import('../views/OneThingView.vue'),
       meta: { title: 'One thing of today', nav: true },
     },
+    {
+      path: '/done',
+      name: 'done',
+      component: () => import('../views/DoneView.vue'),
+      meta: { title: "You're done for today" },
+    },
   ],
 })
 
