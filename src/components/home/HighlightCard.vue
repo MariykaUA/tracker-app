@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink } from 'vue-router'
+import { RouterLink, type RouteLocationRaw } from 'vue-router'
 import oneThingIcon from '@/assets/icons/icon-one-thing.png'
 
-// Today's "one thing" at the top of Home. It opens the One thing tab until
-// the one-day editor exists, which is where the prototype sends it.
+// Today's "one thing" at the top of Home; where it leads is passed in
 const props = defineProps<{
   text?: string // today's one thing, if written
+  to: RouteLocationRaw
 }>()
 
 const written = computed(() => !!props.text)
@@ -20,7 +20,7 @@ const label = computed(() =>
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'one-thing' }" class="highlight-card" :aria-label="label">
+  <RouterLink :to="to" class="highlight-card" :aria-label="label">
     <img class="highlight-card__icon" :src="oneThingIcon" alt="" width="52" height="52" />
     <span class="highlight-card__text">
       <span class="highlight-card__title">Today's highlight?</span>
