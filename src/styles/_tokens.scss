@@ -29,6 +29,33 @@ $color-peach: #ffd6bc; // fill (ink on it: 9.0:1, ink-soft 6.0:1)
 $color-peach-border: #f7c3a1;
 $color-peach-edge: #f2b58f; // 3D bottom edge
 
+// Colours: check-in
+$color-face: rgba(255, 255, 255, 0.85); // round backing of the faces on mood tiles
+$color-stepper-down: rgba(255, 175, 204, 0.494); // "500 fewer steps" button fill
+$color-stepper-down-ink: #4f2140; // its minus sign: 9.9:1 on the fill over white
+$color-stepper-up: #ffd7e6; // "500 more steps" button fill (ink on it: 9.3:1)
+$color-tile-selected: rgba(182, 54, 118, 0.373); // bottom edge of a selected choice tile
+
+// Colours: the mascot, Pebble (design/prototype/Character.dc.html) and its scenes
+$pebble-body: #ffcfb0; // peach
+$pebble-ears: #cdb4db; // lilac
+$pebble-cap: #ee7fa9; // deep pink
+$pebble-cheeks: #ffafcc; // pink
+$pebble-ink: #3f2d5c; // eyes, nose, mouth
+$pebble-shine: #ffffff;
+$scene-teal: #45a29e; // sleep hill
+$scene-cyan: #66fcf1; // sleep "z z"
+$scene-orchid: #c86fc9; // steps leaves
+$scene-pink: #f79ad3;
+$scene-leaf: #6fcfa6; // anxiety leaves
+$scene-mint: #a5ffd6;
+$scene-tear: #1f7a8c; // crying drops
+$scene-sky: #bfdbf7;
+$scene-star: #fcefc2; // one-thing star
+
+// Confetti on the Done screen, in the order the pieces use them
+$confetti-colors: #cdb4db, #ffc8dd, #ffafcc, #bde0fe, #a2d2ff, #ffffff;
+
 // Tracker scales, level 1 → 5. The source of truth is constants/trackers.ts (mirrors
 // the prototype's TR and FG tables), so they're listed here for reference only:
 // sleep (by how rested): #0b0c10 #1f2833 #c5c6c7 #45a29e #66fcf1
@@ -238,6 +265,16 @@ $shadow-highlight:
   0 4px 0 $color-peach-edge,
   0 12px 20px rgba(214, 130, 86, 0.22),
   inset 0 2px 0 rgba(255, 255, 255, 0.65);
+$shadow-pill: // check-in progress bar
+  0 10px 20px rgba(120, 90, 160, 0.18),
+  inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
+$shadow-tile-shine: inset 0 2px 0 rgba(255, 255, 255, 0.55); // under each tile's own 3D edge
+$shadow-tile-selected:
+  inset 0 0 0 3px $color-accent,
+  0 4px 0 0 $color-tile-selected;
+$shadow-badge: // round tick on the Done mascot
+  0 4px 0 $color-primary-edge,
+  0 10px 16px rgba(238, 127, 169, 0.3);
 
 // Buttons: resting and pressed (:active) shadows
 $shadow-btn-primary:

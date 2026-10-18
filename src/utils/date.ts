@@ -24,6 +24,32 @@ export const daysInMonth = (year: number, month: number): number =>
 const fromParts = (year: number, month: number, day: number): DateKey =>
   toDateKey(new Date(Date.UTC(year, month - 1, day)), 'UTC')
 
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const MONTHS = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
+
+// "2026-10-08" → "Thursday 8 October", as the prototype writes dates
+export const longDate = (dateKey: DateKey): string => {
+  const year = yearOf(dateKey)
+  const month = monthOf(dateKey)
+  const day = dayOf(dateKey)
+  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay()
+
+  return `${WEEKDAYS[weekday]} ${day} ${MONTHS[month - 1]}`
+}
+
 // "2026-10-08" → the seven date keys of its week, Monday first
 export const weekOf = (dateKey: DateKey): DateKey[] => {
   const year = yearOf(dateKey)

@@ -24,6 +24,15 @@ export default defineConfigWithVueTs(
   ...pluginVueA11y.configs['flat/recommended'],
 
   {
+    name: 'app/a11y-labels',
+    rules: {
+      // A label linked by for/id is enough; the default also demands nesting, which
+      // would pull the −/+ buttons and slider readouts into the label
+      'vuejs-accessibility/label-has-for': ['error', { required: { some: ['nesting', 'id'] } }],
+    },
+  },
+
+  {
     ...pluginVitest.configs.recommended,
     files: ['src/**/__tests__/*'],
   },

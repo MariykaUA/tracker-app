@@ -1,6 +1,7 @@
 // Global styles, imported once in main.ts. Tokens and mixins are injected by
 // vite.config.ts, so they're available here without a @use.
 @use 'reset';
+@use 'motion';
 
 html {
   // Keep focused elements out from under the sticky header / bottom nav (WCAG 2.4.11)

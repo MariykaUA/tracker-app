@@ -1,9 +1,34 @@
 <script setup lang="ts">
-import { RouterLink } from 'vue-router'
+import { computed, onMounted } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import BaseButton from '@/components/base/BaseButton.vue'
+import { useEntriesStore } from '@/stores/entries.store'
+import { isComplete } from '@/utils/checkin'
+import { yearOf } from '@/utils/date'
+
+const route = useRoute()
+const entries = useEntriesStore()
+
+// The big button above the nav. On Today it opens the check-in; the other
+// tab screens get their own action when they are built.
+const ctaLabel = computed(() => (isComplete(entries.todayEntry) ? 'Edit today' : 'Check in'))
+
+// Today's entry decides the label
+onMounted(() => {
+  entries.fetchYear(yearOf(entries.todayKey)).catch((error: unknown) => console.error(error))
+})
 </script>
 
 <template>
   <div class="bottom-nav">
+    <div v-if="route.name === 'home'" class="bottom-nav__cta">
+      <BaseButton to="/checkin" class="bottom-nav__cta-button">
+        <span>{{ ctaLabel }}</span>
+        <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24">
+          <path d="M5 12h14M13 6l6 6l-6 6" />
+        </svg>
+      </BaseButton>
+    </div>
     <nav class="bottom-nav__panel" aria-label="Main">
       <!-- RouterLink sets aria-current="page" on the active link -->
       <RouterLink to="/" class="bottom-nav__link" exact-active-class="is-active">
@@ -26,6 +51,23 @@ import { RouterLink } from 'vue-router'
 .bottom-nav {
   position: relative;
   padding: 0 $space-4 28px;
+}
+
+.bottom-nav__cta {
+  display: flex;
+  padding-bottom: 14px;
+
+  svg {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+.bottom-nav__cta-button {
+  flex: 1;
 }
 
 .bottom-nav__panel {
