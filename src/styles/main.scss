@@ -23,6 +23,13 @@ body {
   @include focus-ring;
 }
 
+// Screen titles and <main> take focus on each page change so screen readers
+// announce the new screen. They aren't controls, so like the prototype they
+// show no ring (WCAG 2.4.7 asks for one on operable components only).
+[tabindex='-1']:focus {
+  outline: none;
+}
+
 .visually-hidden {
   @include visually-hidden;
 }
