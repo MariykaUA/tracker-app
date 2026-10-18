@@ -108,7 +108,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="tracker motion-rise" :aria-busy="isLoading">
+  <div class="tracker motion-rise" :aria-busy="isLoading || entries.isLoading">
     <header class="tracker__header">
       <div class="tracker__titles">
         <p class="tracker__caption">{{ caption }}</p>

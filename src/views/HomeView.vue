@@ -48,7 +48,7 @@ onMounted(async () => {
       role="group"
       aria-label="Your trackers this week"
       class="home__trackers"
-      :aria-busy="isLoading"
+      :aria-busy="isLoading || entries.isLoading"
     >
       <TrackerWeekCard
         v-for="trackerId in TRACKER_ORDER"
