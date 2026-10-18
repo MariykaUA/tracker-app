@@ -5,6 +5,7 @@ import EarlierDays from '@/components/one-thing/EarlierDays.vue'
 import TodayCard from '@/components/one-thing/TodayCard.vue'
 import oneThingIcon from '@/assets/icons/icon-one-thing.png'
 import { editDay } from '@/router/links'
+import { buzz, TAP } from '@/services/haptics.service'
 import { useEntriesStore } from '@/stores/entries.store'
 import { LAST_STEP } from '@/utils/checkin'
 import { daysBefore, longDate, yearOf } from '@/utils/date'
@@ -21,6 +22,7 @@ const isLoading = ref(true)
 const writeToday = computed(() => editDay(entries.todayKey, LAST_STEP))
 
 function openDay(date: DateKey): void {
+  buzz(TAP)
   void router.push(editDay(date, LAST_STEP))
 }
 
