@@ -23,9 +23,13 @@ import { RouterLink } from 'vue-router'
 </template>
 
 <style scoped lang="scss">
+// The prototype's 28px clears the home indicator on a full-screen phone. The
+// home-screen app reaches the indicator (34px inset), so it keeps 28px; in
+// Safari the toolbar already covers it (0 inset), so the nav sits 16px above.
 .bottom-nav {
   position: relative;
   padding: 0 $space-4 28px;
+  padding-bottom: max($space-4, calc(env(safe-area-inset-bottom) - 6px));
 }
 
 .bottom-nav__panel {
