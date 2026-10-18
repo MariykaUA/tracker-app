@@ -127,7 +127,7 @@ tracker-app/
 │   │   └── index.ts             # Initialises Firebase app, auth, db
 │   │
 │   ├── services/                # The ONLY files that talk to Firebase
-│   │   ├── auth.service.ts      # silent anonymous sign-in (no login screen)
+│   │   ├── auth.service.ts      # signIn, createAccount, signOut (username + password)
 │   │   ├── time.service.ts      # current time from the server, not the phone
 │   │   └── entries.service.ts   # saveDay, loadYear, loadYears
 │   │
@@ -470,7 +470,7 @@ html {
 
 1. Go to **console.firebase.google.com** and click **Add project**. Analytics can stay off.
 2. Click **Add app**, choose **Web (`</>`)**, and copy the `firebaseConfig` values.
-3. Open **Build → Authentication → Get started** and enable **Anonymous** (Sign-in method tab).
+3. Open **Build → Authentication → Get started** and, on the Sign-in method tab, enable **Email/Password** (first toggle only). Keep **Anonymous** on too, so sessions from before login can still be upgraded.
 4. Open **Build → Firestore Database → Create database**. Pick a European location (e.g. `europe-west6`, Zürich) and **production mode**. The location can't be changed later.
 
 ### 7.2 Environment variables
@@ -650,28 +650,25 @@ export const db = initializeFirestore(app, { localCache: persistentLocalCache() 
 
 ### `src/services/auth.service.ts`
 
-There's **no login screen** for now. The app signs in anonymously in the background on first open, which gives the device a stable user ID so the security rules still protect the data.
+Login is a **username and password** (artboards 18 Sign in and 19 Create an account), on Firebase **Email/Password** auth. There's no silent anonymous sign-in any more.
 
-```ts
-import { signInAnonymously, onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/firebase'
+- **Usernames:** trimmed, lowercased, 3–20 letters or numbers (`utils/auth.ts`). Firebase needs an email, so a username maps to `${username}@tracker-app.vercel.app` (`USERNAME_DOMAIN` in `constants/auth.ts`). That address is internal and never shown. Passwords need at least 6 characters.
+- **`getCurrentUser()`:** waits for Firebase to restore the saved session (`auth.authStateReady()`) and returns it, or `null`.
+- **`signIn(username, password)`:** `signInWithEmailAndPassword`.
+- **`createAccount({ name, username, password })`:** if the current user is **anonymous** (from before login), `linkWithCredential` upgrades it in place, so its uid and entries are kept. Otherwise `createUserWithEmailAndPassword`. Then it saves `{ name, username }` on `users/{uid}` with `merge: true`, next to the `years` list.
+- **`signOut()`:** service and store only for now; there's no sign-out UI until it's designed.
+- **`loadName(uid)`:** the name shown on Home.
+- **Errors:** known Firebase errors become an `AuthError` with a code; the screens show the copy from `AUTH_ERROR_MESSAGES` as text under the field (`aria-invalid`, `aria-describedby`), or under the fields with `role="alert"` when it's not one field's fault (offline).
 
-// Resolves with the user ID; signs in anonymously only if there's no session yet
-export function ensureUser(): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const stop = onAuthStateChanged(auth, async (user) => {
-      stop()
-      try {
-        resolve(user ? user.uid : (await signInAnonymously(auth)).user.uid)
-      } catch (error) {
-        reject(error)
-      }
-    })
-  })
-}
-```
+| Code | Message |
+|---|---|
+| `username-taken` | That username is taken. Try another one. |
+| `wrong-login` | Wrong username or password. |
+| `bad-username` | Use 3–20 letters or numbers. |
+| `short-password` | Use at least 6 characters. |
+| `offline` | Couldn't connect. Check your internet and try again. |
 
-**Trade-off to know:** an anonymous user lives in that browser. Clearing site data, or opening the app on another device, starts a new empty user. That's fine while it's one phone. When you want a real login later, Firebase can **link** the anonymous user to a Google account (`linkWithPopup`), so the existing data is kept.
+**Existing data:** someone who used the app before login has an anonymous session. They must choose **Create an account** (not Sign in) on that device to keep their entries.
 
 ### Where "today" comes from
 
@@ -778,8 +775,10 @@ export async function loadYears(uid: string): Promise<number[]> {
 
 ### `auth.store.ts`
 
-- **State:** `uid`, `isReady`.
-- **Actions:** `init()`: calls `ensureUser()` once from `main.ts` before the app mounts, then sets `uid` and `isReady`.
+- **State:** `uid`, `name` (loaded from `users/{uid}` in the background), `isSignedIn` (a user that isn't anonymous).
+- **Actions:**
+  - `init()`: restores the saved session once; `main.ts` and the router guard both await it.
+  - `signIn(username, password)`, `createAccount(account)`, `signOut()`: call the service and update the state. Whenever the account changes (sign out, another account), the entries cache is cleared with `useEntriesStore().clear()`.
 
 ### `entries.store.ts`
 
@@ -805,7 +804,7 @@ The store passes `useAuthStore().uid` into the service functions, so services st
 
 ### Startup
 
-In `main.ts`, await `useAuthStore().init()` before `app.mount('#app')`, so every view can rely on `uid` being set. No router guard is needed while there's no login.
+In `main.ts`, await `useAuthStore().init()` before `app.mount('#app')`. A router `beforeEach` guard also awaits it: signed-out (and anonymous) users go to `/sign-in`, and signed-in users skip the sign-in pages (`meta.guest`).
 
 ---
 
@@ -815,7 +814,9 @@ Every screen below is an artboard in the [Tracker App Prototype](https://claude.
 
 | Route | View | Prototype artboard(s) | Purpose |
 |---|---|---|---|
-| `/` | `HomeView` | Home | Date, "Your week": today's highlight card and one card per tracker with this week's M–S dots |
+| `/sign-in` | `SignInView` | 18 Sign in | Username and password; link to Create an account |
+| `/create-account` | `CreateAccountView` | 19 Create an account | Name, username, password; keeps an anonymous session's entries |
+| `/` | `HomeView` | Home, 20 Home signed in | Date, "Your week, <name>" (the name follows the title, not the artboard's separate "Hi" line): today's highlight card and one card per tracker with this week's M–S dots |
 | `/one-thing` | `OneThingView` | Most important | "One thing of today" plus earlier days; empty days offer "Add" |
 | `/tracker/:id` | `TrackerView` | Sleep / Steps / Mood / Anxiety / Crying calendar, Mood month, Sleep week | One view for all five trackers with **Calendar** (year grid, "2026 so far"), **Month** and **Week** tabs |
 | `/checkin` | `CheckinView` | Check-in 1–6 | Six steps: Sleep → Steps → Mood → Anxiety → Crying → Most important, with Back / Next / Done |
@@ -946,8 +947,8 @@ Env var changes only apply to the next deploy, so redeploy after editing them.
 
 ### 14.4 Firebase notes
 
-- Anonymous sign-in works from any domain, so nothing to configure in Firebase for now.
-- When you add Google login later, add your production domain (`tracker-app.vercel.app` or a custom one) under **Firebase → Authentication → Settings → Authorized domains**.
+- Email/Password sign-in works from any domain, so nothing to configure in Firebase for it.
+- If you add Google login later, add your production domain (`tracker-app.vercel.app` or a custom one) under **Firebase → Authentication → Settings → Authorized domains**.
 
 ---
 
@@ -958,7 +959,7 @@ Work top to bottom; each step ends with something you can see working, matches i
 - [ ] **1. Setup:** scaffold, clean starter, push to GitHub (section 3)
 - [ ] **2. Styles:** `_tokens.scss`, `_mixins.scss`, `main.scss` wired in (section 6)
 - [ ] **3. Firebase:** project, env vars, rules, `firebase/index.ts` (section 8)
-- [ ] **4. Auth:** anonymous sign-in with `auth.service` and `auth.store`, awaited in `main.ts` (no login screen)
+- [ ] **4. Auth:** username + password login with `auth.service`, `auth.store`, `SignInView`, `CreateAccountView` and the router guard (section 8)
 - [ ] **5. Data layer:** `types/entry.ts`, `env.d.ts`, `time.service`, `utils/date.ts` + tests, `entries.service`, `entries.store`
 - [ ] **6. Layout:** `App.vue` shell with skip link and live region, `BottomNav`, page titles and focus on route change
 - [ ] **7. Check-in:** `CheckinView` + the six step components, saving to Firestore, then `DoneView`

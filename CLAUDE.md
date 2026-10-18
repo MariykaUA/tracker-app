@@ -12,7 +12,7 @@ Read `IMPLEMENTATION.md` before any task. It is the plan for this project: stack
 
 ## Stack
 
-Vue 3 + TypeScript (strict, no `any`) + Vite + Vue Router + Pinia + SCSS, Firebase (anonymous Auth + Firestore), deployed on Vercel. No login screen. Today's date comes from the server (`time.service.ts`), not the device clock.
+Vue 3 + TypeScript (strict, no `any`) + Vite + Vue Router + Pinia + SCSS, Firebase (Email/Password Auth + Firestore), deployed on Vercel. Login is username + password: usernames map to an internal email in `src/constants/auth.ts` that is never shown, and signed-out users are sent to `/sign-in` by the router guard. Today's date comes from the server (`time.service.ts`), not the device clock.
 
 ## Working style
 
