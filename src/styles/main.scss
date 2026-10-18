@@ -1,0 +1,40 @@
+// Global styles, imported once in main.ts. Tokens and mixins are injected by
+// vite.config.ts, so they're available here without a @use.
+@use 'reset';
+
+html {
+  // Keep focused elements out from under the sticky header / bottom nav (WCAG 2.4.11)
+  scroll-padding-top: 4rem;
+  scroll-padding-bottom: 5rem;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: $color-bg;
+  color: $color-ink;
+  @include type('body');
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+.visually-hidden {
+  @include visually-hidden;
+}
+
+// The prototype stops its bob, sway, confetti etc. under reduced motion; this
+// is the global safety net for every other animation and transition.
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

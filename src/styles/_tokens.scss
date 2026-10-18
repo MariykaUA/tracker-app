@@ -1,0 +1,277 @@
+// Design tokens, copied from the prototype screens in design/prototype (rule 5).
+// design/tokens.json is only used for values the screens don't show.
+// Variables only: this file is injected into every component (vite.config.ts).
+
+// Colours: base
+$color-bg: #f0e9f4; // page background
+$color-card: #ffffff; // check-in and tracker cards
+$color-ink: #3f2d5c; // main text: 10.1:1 on bg, 12.1:1 on card
+$color-ink-soft: #5a4779; // secondary text: 6.8:1 on bg, 8.0:1 on card
+$color-ink-deep: #2b1d42; // text on the darker tracker fills: 13.0:1 on bg
+$color-ink-muted: #76658c; // weekend letters, past day numbers: 4.4:1 on bg (below 4.5:1, kept as in prototype), 5.2:1 on card
+$color-ink-future: #8a76a6; // future days, chip outlines: 3.4:1 on bg, 4.0:1 on card (below 4.5:1, kept as in prototype)
+$color-accent: #c23a7e; // today marker and checkmarks: 4.2:1 on bg (below 4.5:1, kept as in prototype), 5.0:1 on card
+$color-primary: #ffafcc; // primary button fill (ink text on it: 7.0:1)
+$color-primary-edge: #ee7fa9; // primary button 3D bottom edge, current stepper segment
+$color-edge: #cdb4db; // light button / tab 3D bottom edge, empty-day outline: 1.6:1 on bg (below 3:1, kept as in prototype)
+$color-border: #e6d8ec; // card and field borders: 1.4:1 on card (below 3:1, kept as in prototype)
+$color-track: #e9deef; // slider track, upcoming stepper segments
+$color-fill: #c86fc9; // slider fill: 2.5:1 on track (below 3:1, kept as in prototype)
+$color-thumb-end: #fbf5fb; // slider thumb gradient: #ffffff → this
+$color-chip: #fbe6ee; // round check badge on tiles (ink border and tick on it: 10.1:1)
+$color-sunken: rgba(122, 90, 160, 0.08); // pressed-in areas: text fields, range tabs group
+$color-card-soft: rgba(255, 255, 255, 0.7); // translucent summary panels and list rows
+$color-focus: $color-ink; // focus ring: 10.1:1 on bg
+
+// Colours: highlight card ("one thing" on Home, Done summary)
+$color-peach: #ffd6bc; // fill (ink on it: 9.0:1, ink-soft 6.0:1)
+$color-peach-border: #f7c3a1;
+$color-peach-edge: #f2b58f; // 3D bottom edge
+
+// Tracker scales, level 1 → 5. The source of truth is constants/trackers.ts (mirrors
+// the prototype's TR and FG tables), so they're listed here for reference only:
+// sleep (by how rested): #0b0c10 #1f2833 #c5c6c7 #45a29e #66fcf1
+// steps (share of goal): #d7c0d0 #f7c7db #f79ad3 #c86fc9 #8e518d
+// mood (Very Bad → Great): #231c07 #8b2635 #7c9082 #ffe787 #2cf6b3
+// anxiety (Calm → High): #a5ffd6 #ffa69e #ff686b
+// crying (No tears → A good cry): #bfdbf7 #1f7a8c #022b3a
+
+// Type: families
+$font-display: 'Fredoka', 'Nunito', system-ui, sans-serif; // titles, numerals
+$font-body: 'Nunito', 'Segoe UI', system-ui, sans-serif; // everything else
+
+// Type: styles used on the prototype screens, in rem so text follows the
+// phone's text-size setting (WCAG 1.4.4). 1rem = 16px. Apply with @include type(name).
+$type-styles: (
+  // Fredoka
+  // 56/56 big readouts
+  'numeral': (
+      family: $font-display,
+      size: 3.5rem,
+      line: 3.5rem,
+      weight: 600,
+    ),
+  // 36/40
+  'title-lg': (
+      family: $font-display,
+      size: 2.25rem,
+      line: 2.5rem,
+      weight: 600,
+    ),
+  // 30/34 screen titles
+  'title': (
+      family: $font-display,
+      size: 1.875rem,
+      line: 2.125rem,
+      weight: 600,
+    ),
+  // 28/32 tracker card values
+  'stat': (
+      family: $font-display,
+      size: 1.75rem,
+      line: 2rem,
+      weight: 600,
+    ),
+  // 26/32
+  'title-sm': (
+      family: $font-display,
+      size: 1.625rem,
+      line: 2rem,
+      weight: 600,
+    ),
+  // 24/28
+  'title-xs': (
+      family: $font-display,
+      size: 1.5rem,
+      line: 1.75rem,
+      weight: 600,
+    ),
+  // 20/26 card titles
+  'heading': (
+      family: $font-display,
+      size: 1.25rem,
+      line: 1.625rem,
+      weight: 700,
+    ),
+  // 19/24
+  'heading-sm': (
+      family: $font-display,
+      size: 1.1875rem,
+      line: 1.5rem,
+      weight: 600,
+    ),
+  // 16/20
+  'card-label': (
+      family: $font-display,
+      size: 1rem,
+      line: 1.25rem,
+      weight: 600,
+      tracking: 0.01em,
+    ),
+  // Nunito
+  // 17/22 buttons, choice tiles
+  'button': (
+      family: $font-body,
+      size: 1.0625rem,
+      line: 1.375rem,
+      weight: 800,
+    ),
+  // 16/24 base text
+  'body': (
+      family: $font-body,
+      size: 1rem,
+      line: 1.5rem,
+      weight: 600,
+    ),
+  // 16/22
+  'body-strong': (
+      family: $font-body,
+      size: 1rem,
+      line: 1.375rem,
+      weight: 700,
+    ),
+  // 15/20
+  'label-lg': (
+      family: $font-body,
+      size: 0.9375rem,
+      line: 1.25rem,
+      weight: 800,
+    ),
+  // 14/20 legend chips, field labels
+  'label': (
+      family: $font-body,
+      size: 0.875rem,
+      line: 1.25rem,
+      weight: 800,
+    ),
+  // 14/20 secondary lines
+  'small': (
+      family: $font-body,
+      size: 0.875rem,
+      line: 1.25rem,
+      weight: 700,
+    ),
+  // 13/18
+  'chip': (
+      family: $font-body,
+      size: 0.8125rem,
+      line: 1.125rem,
+      weight: 800,
+    ),
+  // 12/16 grid letters, day numbers
+  'caption': (
+      family: $font-body,
+      size: 0.75rem,
+      line: 1rem,
+      weight: 800,
+      tracking: 0.02em,
+    ),
+  // 12/16 date line above titles
+  'eyebrow': (
+      family: $font-body,
+      size: 0.75rem,
+      line: 1rem,
+      weight: 800,
+      tracking: 0.06em,
+      transform: uppercase,
+    )
+);
+
+// Spacing
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px; // page side gutter, card padding
+$space-5: 20px;
+$space-6: 24px;
+$space-8: 32px; // bottom page padding
+$space-12: 48px;
+$space-page-top: 56px; // top padding of each screen
+
+$tap-min: 56px; // design system minimum button height
+$tap-target: 44px; // project minimum touch target (section 7.1)
+
+// Radius
+$radius-cell: 6px; // year-grid day cells
+$radius-swatch: 8px; // legend swatches
+$radius-dot: 10px; // week dots on Home cards
+$radius-bar: 12px; // week bars
+$radius-chip: 14px; // small square icon buttons
+$radius-icon: 16px; // icon button on the highlight card
+$radius-button: 18px; // buttons, range tabs group
+$radius-row: 20px; // choice rows, text fields
+$radius-tile: 22px; // choice tiles
+$radius-panel: 24px; // summary panels, list rows
+$radius-highlight: 28px; // highlight card on Home
+$radius-card: 32px;
+$radius-pill: 999px;
+
+// Borders
+$border-card: 1.5px solid $color-border;
+
+// Shadows
+$shadow-card:
+  0 10px 20px rgba(120, 90, 160, 0.18),
+  inset 0 1.5px 0 rgba(255, 255, 255, 0.9),
+  inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+  inset 0 -8px 14px rgba(255, 255, 255, 0.16);
+$shadow-sheet:
+  0 24px 48px rgba(120, 90, 160, 0.2),
+  inset 0 1.5px 0 rgba(255, 255, 255, 0.95),
+  inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+  inset 0 -14px 28px rgba(255, 255, 255, 0.22);
+$shadow-pressed:
+  inset 0 2px 6px rgba(120, 90, 160, 0.24),
+  inset 0 -1px 0 rgba(255, 255, 255, 0.75);
+$shadow-cell:
+  inset 0 2px 1px rgba(255, 255, 255, 0.55),
+  inset 0 -2px 2px rgba(160, 60, 110, 0.12);
+$shadow-thumb:
+  0 6px 12px rgba(120, 90, 160, 0.32),
+  inset 0 1.5px 0 rgba(255, 255, 255, 0.9);
+$shadow-highlight:
+  0 4px 0 $color-peach-edge,
+  0 12px 20px rgba(214, 130, 86, 0.22),
+  inset 0 2px 0 rgba(255, 255, 255, 0.65);
+
+// Buttons: resting and pressed (:active) shadows
+$shadow-btn-primary:
+  0 4px 0 $color-primary-edge,
+  0 10px 16px rgba(238, 127, 169, 0.3),
+  inset 0 2px 0 rgba(255, 255, 255, 0.55);
+$shadow-btn-primary-active:
+  0 1px 0 $color-primary-edge,
+  0 4px 8px rgba(238, 127, 169, 0.24),
+  inset 0 2px 0 rgba(255, 255, 255, 0.55);
+$shadow-btn-light:
+  0 4px 0 $color-edge,
+  0 10px 16px rgba(120, 90, 160, 0.14),
+  inset 0 2px 0 #ffffff;
+$shadow-btn-light-active:
+  0 1px 0 $color-edge,
+  0 4px 8px rgba(120, 90, 160, 0.12),
+  inset 0 2px 0 #ffffff;
+$shadow-btn-sm:
+  0 3px 0 $color-edge,
+  inset 0 2px 0 #ffffff;
+$shadow-btn-sm-active:
+  0 1px 0 $color-edge,
+  inset 0 2px 0 #ffffff;
+$shadow-btn-tab:
+  0 3px 0 $color-edge,
+  inset 0 2px 0 rgba(255, 255, 255, 0.7);
+$shadow-btn-tab-active:
+  0 1px 0 $color-edge,
+  inset 0 2px 0 rgba(255, 255, 255, 0.7);
+
+// Glass blur
+$blur-glass: blur(20px) saturate(1.5);
+$blur-glass-sm: blur(12px) saturate(1.5);
+
+// Motion: easings and durations from the prototype
+$ease-spring: cubic-bezier(0.3, 1.6, 0.5, 1); // press, cell tap
+$ease-bounce: cubic-bezier(0.3, 1.3, 0.5, 1); // bars, progress ring
+$ease-slide: cubic-bezier(0.2, 0.9, 0.3, 1.05); // check-in step slide
+$duration-press: 120ms;
+$duration-fast: 180ms;
+$duration-fade: 300ms;

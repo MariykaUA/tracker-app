@@ -1,0 +1,63 @@
+// Shared mixins. Mixins only: this file is injected into every component
+// (vite.config.ts), so plain CSS rules here would be duplicated.
+@use 'sass:map';
+@use 'tokens' as *;
+
+// 3px ink ring with a 3px offset, as on the prototype's buttons, tiles and fields
+@mixin focus-ring {
+  outline: 3px solid $color-focus;
+  outline-offset: 3px;
+}
+
+// Hidden on screen, still read by screen readers
+@mixin visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Project minimum touch target (WCAG 2.5.8, section 7.1)
+@mixin tap-target {
+  min-width: $tap-target;
+  min-height: $tap-target;
+}
+
+// One of the prototype's text styles from $type-styles, e.g. @include type('title')
+@mixin type($name) {
+  $style: map.get($type-styles, $name);
+
+  @if not $style {
+    @error 'Unknown type style "#{$name}".';
+  }
+
+  font-family: map.get($style, family);
+  font-size: map.get($style, size);
+  line-height: map.get($style, line);
+  font-weight: map.get($style, weight);
+
+  @if map.has-key($style, tracking) {
+    letter-spacing: map.get($style, tracking);
+  }
+
+  @if map.has-key($style, transform) {
+    text-transform: map.get($style, transform);
+  }
+}
+
+// Frosted glass behind cards and panels
+@mixin glass($size: 'md') {
+  $blur: $blur-glass;
+
+  @if $size == 'sm' {
+    $blur: $blur-glass-sm;
+  }
+
+  -webkit-backdrop-filter: $blur;
+  backdrop-filter: $blur;
+}
