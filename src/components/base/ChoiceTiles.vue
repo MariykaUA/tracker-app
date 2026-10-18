@@ -1,5 +1,6 @@
 <script setup lang="ts" generic="T extends string">
 import { useId } from 'vue'
+import { buzz, TAP } from '@/services/haptics.service'
 import type { ChoiceOption } from '@/types/choice'
 
 // A radio group drawn as the prototype's coloured tiles. Real radio inputs, so
@@ -34,6 +35,7 @@ const name = useId()
           type="radio"
           :name="name"
           :value="option.value"
+          @change="buzz(TAP)"
         />
         <slot name="icon" :option="option" />
         <span>{{ option.label }}</span>
