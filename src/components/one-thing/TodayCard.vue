@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { RouterLink, type RouteLocationRaw } from 'vue-router'
+import { buzz, TAP } from '@/services/haptics.service'
 
 // Today's one thing at the top of the One thing tab: a prompt to write it,
 // or what was written with "Written" and "Edit"
@@ -10,7 +11,12 @@ defineProps<{
 </script>
 
 <template>
-  <RouterLink :to="to" class="today-card" :class="{ 'today-card--written': text }">
+  <RouterLink
+    :to="to"
+    class="today-card"
+    :class="{ 'today-card--written': text }"
+    @click="buzz(TAP)"
+  >
     <span class="today-card__top">
       <span class="today-card__tags">
         <span class="today-card__today">Today</span>
