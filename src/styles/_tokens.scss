@@ -53,6 +53,12 @@ $scene-tear: #1f7a8c; // crying drops
 $scene-sky: #bfdbf7;
 $scene-star: #fcefc2; // one-thing star
 
+// "Earlier days" on the One thing tab: fill and 3D edge, taking turns down the list
+// (ink on each fill: 6.4:1 or more)
+$earlier-tones: (#ffc8dd, #f3a3c2), (#bde0fe, #94c6f2), (#cdb4db, #b295c6), (#a2d2ff, #7fbaf0),
+  (#ffafcc, #ee7fa9);
+$color-earlier-empty: rgba(255, 255, 255, 0.55); // a day with nothing written
+
 // Confetti on the Done screen, in the order the pieces use them
 $confetti-colors: #cdb4db, #ffc8dd, #ffafcc, #bde0fe, #a2d2ff, #ffffff;
 
