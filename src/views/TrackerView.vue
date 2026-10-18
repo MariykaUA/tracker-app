@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import MonthCalendar from '@/components/calendar/MonthCalendar.vue'
 import MoodNotes from '@/components/calendar/MoodNotes.vue'
 import RangeTabs from '@/components/calendar/RangeTabs.vue'
@@ -8,16 +9,18 @@ import WeekBars from '@/components/calendar/WeekBars.vue'
 import YearGrid from '@/components/calendar/YearGrid.vue'
 import { TRACKER_ICONS } from '@/constants/icons'
 import { TRACKERS } from '@/constants/trackers'
+import { editDay } from '@/router/links'
 import { useEntriesStore } from '@/stores/entries.store'
 import { dateKeyOf, dateRange, daysInMonth, monthName, monthOf, yearOf } from '@/utils/date'
 import { summarize } from '@/utils/stats'
 import type { RangeView } from '@/types/calendar'
-import type { TrackerId, WeekDay } from '@/types/entry'
+import type { DateKey, TrackerId, WeekDay } from '@/types/entry'
 
 // One view for all five trackers: Calendar (the year), Month and Week
 const props = defineProps<{ trackerId: TrackerId }>()
 
 const entries = useEntriesStore()
+const router = useRouter()
 
 const isLoading = ref(true)
 const view = ref<RangeView>('year')
@@ -66,6 +69,12 @@ const notesEmpty = computed(
     `No notes ${view.value === 'month' ? `in ${monthName(month.value)}` : 'this week'}. Add one when you log your mood.`,
 )
 
+// Any day on the page (a cell, a week bar, a mood note) opens this tracker's
+// question for that day in the one-day editor
+function openDay(date: DateKey): void {
+  void router.push(editDay(date, tracker.value.step))
+}
+
 // The year on screen and this week (which can reach into last year)
 onMounted(async () => {
   try {
@@ -102,6 +111,7 @@ onMounted(async () => {
       :year="year"
       :entries="entries.entries"
       :today-key="entries.todayKey"
+      @pick="openDay"
     />
 
     <div v-else class="tracker__range">
@@ -112,6 +122,7 @@ onMounted(async () => {
         :year="year"
         :entries="entries.entries"
         :today-key="entries.todayKey"
+        @pick="openDay"
       />
       <WeekBars
         v-else
@@ -119,6 +130,7 @@ onMounted(async () => {
         :days="entries.weekEntries"
         :today-key="entries.todayKey"
         :note="summary.weekNote"
+        @pick="openDay"
       />
       <SummaryCards :summary="summary" />
     </div>
@@ -128,6 +140,7 @@ onMounted(async () => {
       :days="spanDays"
       :caption="notesCaption"
       :empty-text="notesEmpty"
+      @pick="openDay"
     />
   </div>
 </template>
