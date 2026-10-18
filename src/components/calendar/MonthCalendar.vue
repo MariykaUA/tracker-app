@@ -4,6 +4,7 @@ import GlassCard from '@/components/base/GlassCard.vue'
 import PeriodSwitcher from './PeriodSwitcher.vue'
 import TrackerLegend from './TrackerLegend.vue'
 import { TRACKERS } from '@/constants/trackers'
+import { buzz, TAP } from '@/services/haptics.service'
 import { dayCell, monthGrid, type DayCell } from '@/utils/calendar'
 import { dayOf, longDate, monthName, monthOf, yearOf } from '@/utils/date'
 import type { DateKey, EntriesByDate, TrackerId } from '@/types/entry'
@@ -35,6 +36,12 @@ const cells = computed<(DayCell | null)[]>(() =>
     date ? dayCell(props.trackerId, date, props.entries[date], props.todayKey, longDate) : null,
   ),
 )
+
+// The ‹ › arrows, with the prototype's tap of vibration
+function moveMonth(delta: number): void {
+  buzz(TAP)
+  month.value = Math.min(lastMonth.value, Math.max(1, month.value + delta))
+}
 </script>
 
 <template>
@@ -45,8 +52,8 @@ const cells = computed<(DayCell | null)[]>(() =>
       next-label="Next month"
       :previous-disabled="month <= 1"
       :next-disabled="month >= lastMonth"
-      @previous="month = Math.max(1, month - 1)"
-      @next="month = Math.min(lastMonth, month + 1)"
+      @previous="moveMonth(-1)"
+      @next="moveMonth(1)"
     />
 
     <TrackerLegend :tracker-id="trackerId" />
