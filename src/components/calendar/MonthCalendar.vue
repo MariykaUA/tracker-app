@@ -9,13 +9,16 @@ import { dayOf, longDate, monthName, monthOf, yearOf } from '@/utils/date'
 import type { DateKey, EntriesByDate, TrackerId } from '@/types/entry'
 
 // One month of one tracker, Monday first. Earlier months of the year can be
-// browsed; months still to come can't, as in the prototype.
+// browsed; months still to come can't, as in the prototype. Tapping a day
+// opens it in the one-day editor.
 const props = defineProps<{
   trackerId: TrackerId
   year: number
   entries: EntriesByDate
   todayKey: DateKey
 }>()
+
+defineEmits<{ pick: [date: DateKey] }>()
 
 const month = defineModel<number>('month', { required: true })
 
@@ -54,16 +57,19 @@ const cells = computed<(DayCell | null)[]>(() =>
       </div>
       <div class="month-calendar__days">
         <template v-for="(cell, index) in cells" :key="cell?.date ?? `blank-${index}`">
-          <span
+          <button
             v-if="cell"
-            role="img"
+            type="button"
             class="month-calendar__day"
             :class="[`month-calendar__day--${cell.state}`, { 'is-today': cell.isToday }]"
             :style="cell.color ? { backgroundColor: cell.color, color: cell.ink } : undefined"
+            :disabled="cell.state === 'future'"
             :aria-label="cell.label"
+            :aria-current="cell.isToday ? 'date' : undefined"
+            @click="$emit('pick', cell.date)"
           >
             {{ dayOf(cell.date) }}
-          </span>
+          </button>
           <span v-else class="month-calendar__blank" aria-hidden="true"></span>
         </template>
       </div>
@@ -106,6 +112,7 @@ $cell: $tap-target;
   border-radius: $radius-chip;
   color: $color-ink;
   @include type('label');
+  @include cell-press;
 }
 
 .month-calendar__day--logged {
