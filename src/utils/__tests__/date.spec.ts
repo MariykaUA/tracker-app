@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   dateKeyOf,
   dateRange,
+  daysBefore,
   dayOf,
   daysInMonth,
   longDate,
@@ -136,5 +137,15 @@ describe('dateRange', () => {
 
   it('names both months across a month end', () => {
     expect(dateRange('2026-09-28', '2026-10-04')).toBe('28 September to 4 October')
+  })
+})
+
+describe('daysBefore', () => {
+  it('lists the days before a date, newest first', () => {
+    expect(daysBefore('2026-10-08', 3)).toEqual(['2026-10-07', '2026-10-06', '2026-10-05'])
+  })
+
+  it('reaches back into last year', () => {
+    expect(daysBefore('2027-01-02', 2)).toEqual(['2027-01-01', '2026-12-31'])
   })
 })
