@@ -76,3 +76,9 @@ export const weekOf = (dateKey: DateKey): DateKey[] => {
 
   return Array.from({ length: 7 }, (_, i) => dateKeyOf(year, month, day - sinceMonday + i))
 }
+
+// The days before a date, newest first: "2026-10-08", 2 → ["2026-10-07", "2026-10-06"]
+export const daysBefore = (dateKey: DateKey, count: number): DateKey[] =>
+  Array.from({ length: count }, (_, i) =>
+    dateKeyOf(yearOf(dateKey), monthOf(dateKey), dayOf(dateKey) - i - 1),
+  )
