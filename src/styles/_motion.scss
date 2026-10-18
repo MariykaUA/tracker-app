@@ -39,6 +39,12 @@
     motion-bob 1.6s ease-in-out 950ms infinite;
 }
 
+// Week chart bars grow up from the bottom
+.motion-grow {
+  animation: motion-grow 600ms $ease-bounce both;
+  transform-origin: 50% 100%;
+}
+
 .motion-confetti {
   animation: motion-fall 2.6s cubic-bezier(0.3, 0.6, 0.5, 1) both;
 }
@@ -130,6 +136,15 @@
   }
 }
 
+@keyframes motion-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
 @keyframes motion-fall {
   0% {
     transform: translateY(-60px) rotate(0deg);
@@ -156,7 +171,8 @@
   .motion-sway,
   .motion-breathe,
   .motion-drip,
-  .motion-pop {
+  .motion-pop,
+  .motion-grow {
     animation: none;
   }
 
