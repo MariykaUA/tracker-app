@@ -28,3 +28,9 @@ export interface Entry extends Partial<DayValues> {
 }
 
 export type EntriesByDate = Record<DateKey, Entry>
+
+// One day of a week view; entry is missing when nothing was logged
+export interface WeekDay {
+  date: DateKey
+  entry: Entry | undefined
+}
